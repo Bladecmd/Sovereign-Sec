@@ -1,0 +1,446 @@
+{
+  "diffs": [
+    {
+      "file": "x:\\Pr0\\Sovereign Sec\\.git\\FETCH_HEAD",
+      "timestamp": 1791554052388,
+      "toonString": "type: FileDiff\nfile: x:\\Pr0\\Sovereign Sec\\.git\\FETCH_HEAD\ntimestamp: 1791554051683\nchanges:\n  - line: 1-2\n    removed: |\n      f22f20afca846d8fe9624336df4bad1150e460c3\t\tbranch 'master' of https://github.com/Bladecmd/sovereign-security\n      0289ef9dccf50a8d83d4567fc8107c4eb492ffa0\tnot-for-merge\tbranch 'feat/phase-2d-closure-v11-resilience' of https://github.com/Bladecmd/sovereign-security\nsummary: |\n  Failed to generate summary: API key not configured. Please configure your API key using 'Scratch: Configure API Key' command.\ncontextAware: false\n",
+      "diff": {
+        "type": "FileDiff",
+        "file": "x:\\Pr0\\Sovereign Sec\\.git\\FETCH_HEAD",
+        "timestamp": 1791554051683,
+        "changes": [
+          {
+            "line": "1-2",
+            "added": "",
+            "removed": "f22f20afca846d8fe9624336df4bad1150e460c3\t\tbranch 'master' of https://github.com/Bladecmd/sovereign-security\n0289ef9dccf50a8d83d4567fc8107c4eb492ffa0\tnot-for-merge\tbranch 'feat/phase-2d-closure-v11-resilience' of https://github.com/Bladecmd/sovereign-security",
+            "modified": ""
+          }
+        ],
+        "summary": "Failed to generate summary: API key not configured. Please configure your API key using 'Scratch: Configure API Key' command.",
+        "contextAware": false
+      },
+      "summary": "Failed to generate summary: API key not configured. Please configure your API key using 'Scratch: Configure API Key' command."
+    },
+    {
+      "file": "x:\\Pr0\\Sovereign Sec\\.git\\FETCH_HEAD",
+      "timestamp": 1791554232753,
+      "toonString": "type: FileDiff\nfile: x:\\Pr0\\Sovereign Sec\\.git\\FETCH_HEAD\ntimestamp: 1791554232681\nchanges:\n  - line: 1-2\n    removed: |\n      f22f20afca846d8fe9624336df4bad1150e460c3\t\tbranch 'master' of https://github.com/Bladecmd/sovereign-security\n      0289ef9dccf50a8d83d4567fc8107c4eb492ffa0\tnot-for-merge\tbranch 'feat/phase-2d-closure-v11-resilience' of https://github.com/Bladecmd/sovereign-security\nsummary: |\n  Failed to generate summary: API key not configured. Please configure your API key using 'Scratch: Configure API Key' command.\ncontextAware: false\n",
+      "diff": {
+        "type": "FileDiff",
+        "file": "x:\\Pr0\\Sovereign Sec\\.git\\FETCH_HEAD",
+        "timestamp": 1791554232681,
+        "changes": [
+          {
+            "line": "1-2",
+            "added": "",
+            "removed": "f22f20afca846d8fe9624336df4bad1150e460c3\t\tbranch 'master' of https://github.com/Bladecmd/sovereign-security\n0289ef9dccf50a8d83d4567fc8107c4eb492ffa0\tnot-for-merge\tbranch 'feat/phase-2d-closure-v11-resilience' of https://github.com/Bladecmd/sovereign-security",
+            "modified": ""
+          }
+        ],
+        "summary": "Failed to generate summary: API key not configured. Please configure your API key using 'Scratch: Configure API Key' command.",
+        "contextAware": false
+      },
+      "summary": "Failed to generate summary: API key not configured. Please configure your API key using 'Scratch: Configure API Key' command."
+    },
+    {
+      "file": "x:\\Pr0\\Sovereign Sec\\.git\\FETCH_HEAD",
+      "timestamp": 1791554413992,
+      "toonString": "type: FileDiff\nfile: x:\\Pr0\\Sovereign Sec\\.git\\FETCH_HEAD\ntimestamp: 1791554413924\nchanges:\n  - line: 1-2\n    removed: |\n      f22f20afca846d8fe9624336df4bad1150e460c3\t\tbranch 'master' of https://github.com/Bladecmd/sovereign-security\n      0289ef9dccf50a8d83d4567fc8107c4eb492ffa0\tnot-for-merge\tbranch 'feat/phase-2d-closure-v11-resilience' of https://github.com/Bladecmd/sovereign-security\nsummary: |\n  Failed to generate summary: API key not configured. Please configure your API key using 'Scratch: Configure API Key' command.\ncontextAware: false\n",
+      "diff": {
+        "type": "FileDiff",
+        "file": "x:\\Pr0\\Sovereign Sec\\.git\\FETCH_HEAD",
+        "timestamp": 1791554413924,
+        "changes": [
+          {
+            "line": "1-2",
+            "added": "",
+            "removed": "f22f20afca846d8fe9624336df4bad1150e460c3\t\tbranch 'master' of https://github.com/Bladecmd/sovereign-security\n0289ef9dccf50a8d83d4567fc8107c4eb492ffa0\tnot-for-merge\tbranch 'feat/phase-2d-closure-v11-resilience' of https://github.com/Bladecmd/sovereign-security",
+            "modified": ""
+          }
+        ],
+        "summary": "Failed to generate summary: API key not configured. Please configure your API key using 'Scratch: Configure API Key' command.",
+        "contextAware": false
+      },
+      "summary": "Failed to generate summary: API key not configured. Please configure your API key using 'Scratch: Configure API Key' command."
+    },
+    {
+      "file": "x:\\Pr0\\Sovereign Sec\\.git\\FETCH_HEAD",
+      "timestamp": 1791554594968,
+      "toonString": "type: FileDiff\nfile: x:\\Pr0\\Sovereign Sec\\.git\\FETCH_HEAD\ntimestamp: 1791554594890\nchanges:\n  - line: 1-2\n    removed: |\n      f22f20afca846d8fe9624336df4bad1150e460c3\t\tbranch 'master' of https://github.com/Bladecmd/sovereign-security\n      0289ef9dccf50a8d83d4567fc8107c4eb492ffa0\tnot-for-merge\tbranch 'feat/phase-2d-closure-v11-resilience' of https://github.com/Bladecmd/sovereign-security\nsummary: |\n  Failed to generate summary: API key not configured. Please configure your API key using 'Scratch: Configure API Key' command.\ncontextAware: false\n",
+      "diff": {
+        "type": "FileDiff",
+        "file": "x:\\Pr0\\Sovereign Sec\\.git\\FETCH_HEAD",
+        "timestamp": 1791554594890,
+        "changes": [
+          {
+            "line": "1-2",
+            "added": "",
+            "removed": "f22f20afca846d8fe9624336df4bad1150e460c3\t\tbranch 'master' of https://github.com/Bladecmd/sovereign-security\n0289ef9dccf50a8d83d4567fc8107c4eb492ffa0\tnot-for-merge\tbranch 'feat/phase-2d-closure-v11-resilience' of https://github.com/Bladecmd/sovereign-security",
+            "modified": ""
+          }
+        ],
+        "summary": "Failed to generate summary: API key not configured. Please configure your API key using 'Scratch: Configure API Key' command.",
+        "contextAware": false
+      },
+      "summary": "Failed to generate summary: API key not configured. Please configure your API key using 'Scratch: Configure API Key' command."
+    },
+    {
+      "file": "x:\\Pr0\\Sovereign Sec\\.git\\FETCH_HEAD",
+      "timestamp": 1791554775966,
+      "toonString": "type: FileDiff\nfile: x:\\Pr0\\Sovereign Sec\\.git\\FETCH_HEAD\ntimestamp: 1791554775891\nchanges:\n  - line: 1-2\n    removed: |\n      f22f20afca846d8fe9624336df4bad1150e460c3\t\tbranch 'master' of https://github.com/Bladecmd/sovereign-security\n      0289ef9dccf50a8d83d4567fc8107c4eb492ffa0\tnot-for-merge\tbranch 'feat/phase-2d-closure-v11-resilience' of https://github.com/Bladecmd/sovereign-security\nsummary: |\n  Failed to generate summary: API key not configured. Please configure your API key using 'Scratch: Configure API Key' command.\ncontextAware: false\n",
+      "diff": {
+        "type": "FileDiff",
+        "file": "x:\\Pr0\\Sovereign Sec\\.git\\FETCH_HEAD",
+        "timestamp": 1791554775891,
+        "changes": [
+          {
+            "line": "1-2",
+            "added": "",
+            "removed": "f22f20afca846d8fe9624336df4bad1150e460c3\t\tbranch 'master' of https://github.com/Bladecmd/sovereign-security\n0289ef9dccf50a8d83d4567fc8107c4eb492ffa0\tnot-for-merge\tbranch 'feat/phase-2d-closure-v11-resilience' of https://github.com/Bladecmd/sovereign-security",
+            "modified": ""
+          }
+        ],
+        "summary": "Failed to generate summary: API key not configured. Please configure your API key using 'Scratch: Configure API Key' command.",
+        "contextAware": false
+      },
+      "summary": "Failed to generate summary: API key not configured. Please configure your API key using 'Scratch: Configure API Key' command."
+    },
+    {
+      "file": "x:\\Pr0\\Sovereign Sec\\.git\\FETCH_HEAD",
+      "timestamp": 1791554956941,
+      "toonString": "type: FileDiff\nfile: x:\\Pr0\\Sovereign Sec\\.git\\FETCH_HEAD\ntimestamp: 1791554956875\nchanges:\n  - line: 1-2\n    removed: |\n      f22f20afca846d8fe9624336df4bad1150e460c3\t\tbranch 'master' of https://github.com/Bladecmd/sovereign-security\n      0289ef9dccf50a8d83d4567fc8107c4eb492ffa0\tnot-for-merge\tbranch 'feat/phase-2d-closure-v11-resilience' of https://github.com/Bladecmd/sovereign-security\nsummary: |\n  Failed to generate summary: API key not configured. Please configure your API key using 'Scratch: Configure API Key' command.\ncontextAware: false\n",
+      "diff": {
+        "type": "FileDiff",
+        "file": "x:\\Pr0\\Sovereign Sec\\.git\\FETCH_HEAD",
+        "timestamp": 1791554956875,
+        "changes": [
+          {
+            "line": "1-2",
+            "added": "",
+            "removed": "f22f20afca846d8fe9624336df4bad1150e460c3\t\tbranch 'master' of https://github.com/Bladecmd/sovereign-security\n0289ef9dccf50a8d83d4567fc8107c4eb492ffa0\tnot-for-merge\tbranch 'feat/phase-2d-closure-v11-resilience' of https://github.com/Bladecmd/sovereign-security",
+            "modified": ""
+          }
+        ],
+        "summary": "Failed to generate summary: API key not configured. Please configure your API key using 'Scratch: Configure API Key' command.",
+        "contextAware": false
+      },
+      "summary": "Failed to generate summary: API key not configured. Please configure your API key using 'Scratch: Configure API Key' command."
+    },
+    {
+      "file": "x:\\Pr0\\Sovereign Sec\\.git\\FETCH_HEAD",
+      "timestamp": 1791555137883,
+      "toonString": "type: FileDiff\nfile: x:\\Pr0\\Sovereign Sec\\.git\\FETCH_HEAD\ntimestamp: 1791555137822\nchanges:\n  - line: 1-2\n    removed: |\n      f22f20afca846d8fe9624336df4bad1150e460c3\t\tbranch 'master' of https://github.com/Bladecmd/sovereign-security\n      0289ef9dccf50a8d83d4567fc8107c4eb492ffa0\tnot-for-merge\tbranch 'feat/phase-2d-closure-v11-resilience' of https://github.com/Bladecmd/sovereign-security\nsummary: |\n  Failed to generate summary: API key not configured. Please configure your API key using 'Scratch: Configure API Key' command.\ncontextAware: false\n",
+      "diff": {
+        "type": "FileDiff",
+        "file": "x:\\Pr0\\Sovereign Sec\\.git\\FETCH_HEAD",
+        "timestamp": 1791555137822,
+        "changes": [
+          {
+            "line": "1-2",
+            "added": "",
+            "removed": "f22f20afca846d8fe9624336df4bad1150e460c3\t\tbranch 'master' of https://github.com/Bladecmd/sovereign-security\n0289ef9dccf50a8d83d4567fc8107c4eb492ffa0\tnot-for-merge\tbranch 'feat/phase-2d-closure-v11-resilience' of https://github.com/Bladecmd/sovereign-security",
+            "modified": ""
+          }
+        ],
+        "summary": "Failed to generate summary: API key not configured. Please configure your API key using 'Scratch: Configure API Key' command.",
+        "contextAware": false
+      },
+      "summary": "Failed to generate summary: API key not configured. Please configure your API key using 'Scratch: Configure API Key' command."
+    },
+    {
+      "file": "x:\\Pr0\\Sovereign Sec\\.git\\FETCH_HEAD",
+      "timestamp": 1791555318830,
+      "toonString": "type: FileDiff\nfile: x:\\Pr0\\Sovereign Sec\\.git\\FETCH_HEAD\ntimestamp: 1791555318760\nchanges:\n  - line: 1-2\n    removed: |\n      f22f20afca846d8fe9624336df4bad1150e460c3\t\tbranch 'master' of https://github.com/Bladecmd/sovereign-security\n      0289ef9dccf50a8d83d4567fc8107c4eb492ffa0\tnot-for-merge\tbranch 'feat/phase-2d-closure-v11-resilience' of https://github.com/Bladecmd/sovereign-security\nsummary: |\n  Failed to generate summary: API key not configured. Please configure your API key using 'Scratch: Configure API Key' command.\ncontextAware: false\n",
+      "diff": {
+        "type": "FileDiff",
+        "file": "x:\\Pr0\\Sovereign Sec\\.git\\FETCH_HEAD",
+        "timestamp": 1791555318760,
+        "changes": [
+          {
+            "line": "1-2",
+            "added": "",
+            "removed": "f22f20afca846d8fe9624336df4bad1150e460c3\t\tbranch 'master' of https://github.com/Bladecmd/sovereign-security\n0289ef9dccf50a8d83d4567fc8107c4eb492ffa0\tnot-for-merge\tbranch 'feat/phase-2d-closure-v11-resilience' of https://github.com/Bladecmd/sovereign-security",
+            "modified": ""
+          }
+        ],
+        "summary": "Failed to generate summary: API key not configured. Please configure your API key using 'Scratch: Configure API Key' command.",
+        "contextAware": false
+      },
+      "summary": "Failed to generate summary: API key not configured. Please configure your API key using 'Scratch: Configure API Key' command."
+    },
+    {
+      "file": "x:\\Pr0\\Sovereign Sec\\.git\\FETCH_HEAD",
+      "timestamp": 1791555499765,
+      "toonString": "type: FileDiff\nfile: x:\\Pr0\\Sovereign Sec\\.git\\FETCH_HEAD\ntimestamp: 1791555499684\nchanges:\n  - line: 1-2\n    removed: |\n      f22f20afca846d8fe9624336df4bad1150e460c3\t\tbranch 'master' of https://github.com/Bladecmd/sovereign-security\n      0289ef9dccf50a8d83d4567fc8107c4eb492ffa0\tnot-for-merge\tbranch 'feat/phase-2d-closure-v11-resilience' of https://github.com/Bladecmd/sovereign-security\nsummary: |\n  Failed to generate summary: API key not configured. Please configure your API key using 'Scratch: Configure API Key' command.\ncontextAware: false\n",
+      "diff": {
+        "type": "FileDiff",
+        "file": "x:\\Pr0\\Sovereign Sec\\.git\\FETCH_HEAD",
+        "timestamp": 1791555499684,
+        "changes": [
+          {
+            "line": "1-2",
+            "added": "",
+            "removed": "f22f20afca846d8fe9624336df4bad1150e460c3\t\tbranch 'master' of https://github.com/Bladecmd/sovereign-security\n0289ef9dccf50a8d83d4567fc8107c4eb492ffa0\tnot-for-merge\tbranch 'feat/phase-2d-closure-v11-resilience' of https://github.com/Bladecmd/sovereign-security",
+            "modified": ""
+          }
+        ],
+        "summary": "Failed to generate summary: API key not configured. Please configure your API key using 'Scratch: Configure API Key' command.",
+        "contextAware": false
+      },
+      "summary": "Failed to generate summary: API key not configured. Please configure your API key using 'Scratch: Configure API Key' command."
+    },
+    {
+      "file": "x:\\Pr0\\Sovereign Sec\\.git\\FETCH_HEAD",
+      "timestamp": 1791555680732,
+      "toonString": "type: FileDiff\nfile: x:\\Pr0\\Sovereign Sec\\.git\\FETCH_HEAD\ntimestamp: 1791555680652\nchanges:\n  - line: 1-2\n    removed: |\n      f22f20afca846d8fe9624336df4bad1150e460c3\t\tbranch 'master' of https://github.com/Bladecmd/sovereign-security\n      0289ef9dccf50a8d83d4567fc8107c4eb492ffa0\tnot-for-merge\tbranch 'feat/phase-2d-closure-v11-resilience' of https://github.com/Bladecmd/sovereign-security\nsummary: |\n  Failed to generate summary: API key not configured. Please configure your API key using 'Scratch: Configure API Key' command.\ncontextAware: false\n",
+      "diff": {
+        "type": "FileDiff",
+        "file": "x:\\Pr0\\Sovereign Sec\\.git\\FETCH_HEAD",
+        "timestamp": 1791555680652,
+        "changes": [
+          {
+            "line": "1-2",
+            "added": "",
+            "removed": "f22f20afca846d8fe9624336df4bad1150e460c3\t\tbranch 'master' of https://github.com/Bladecmd/sovereign-security\n0289ef9dccf50a8d83d4567fc8107c4eb492ffa0\tnot-for-merge\tbranch 'feat/phase-2d-closure-v11-resilience' of https://github.com/Bladecmd/sovereign-security",
+            "modified": ""
+          }
+        ],
+        "summary": "Failed to generate summary: API key not configured. Please configure your API key using 'Scratch: Configure API Key' command.",
+        "contextAware": false
+      },
+      "summary": "Failed to generate summary: API key not configured. Please configure your API key using 'Scratch: Configure API Key' command."
+    },
+    {
+      "file": "x:\\Pr0\\Sovereign Sec\\.git\\FETCH_HEAD",
+      "timestamp": 1791555861795,
+      "toonString": "type: FileDiff\nfile: x:\\Pr0\\Sovereign Sec\\.git\\FETCH_HEAD\ntimestamp: 1791555861679\nchanges:\n  - line: 1-2\n    removed: |\n      f22f20afca846d8fe9624336df4bad1150e460c3\t\tbranch 'master' of https://github.com/Bladecmd/sovereign-security\n      0289ef9dccf50a8d83d4567fc8107c4eb492ffa0\tnot-for-merge\tbranch 'feat/phase-2d-closure-v11-resilience' of https://github.com/Bladecmd/sovereign-security\nsummary: |\n  Failed to generate summary: API key not configured. Please configure your API key using 'Scratch: Configure API Key' command.\ncontextAware: false\n",
+      "diff": {
+        "type": "FileDiff",
+        "file": "x:\\Pr0\\Sovereign Sec\\.git\\FETCH_HEAD",
+        "timestamp": 1791555861679,
+        "changes": [
+          {
+            "line": "1-2",
+            "added": "",
+            "removed": "f22f20afca846d8fe9624336df4bad1150e460c3\t\tbranch 'master' of https://github.com/Bladecmd/sovereign-security\n0289ef9dccf50a8d83d4567fc8107c4eb492ffa0\tnot-for-merge\tbranch 'feat/phase-2d-closure-v11-resilience' of https://github.com/Bladecmd/sovereign-security",
+            "modified": ""
+          }
+        ],
+        "summary": "Failed to generate summary: API key not configured. Please configure your API key using 'Scratch: Configure API Key' command.",
+        "contextAware": false
+      },
+      "summary": "Failed to generate summary: API key not configured. Please configure your API key using 'Scratch: Configure API Key' command."
+    },
+    {
+      "file": "x:\\Pr0\\Sovereign Sec\\.git\\FETCH_HEAD",
+      "timestamp": 1791556042896,
+      "toonString": "type: FileDiff\nfile: x:\\Pr0\\Sovereign Sec\\.git\\FETCH_HEAD\ntimestamp: 1791556042817\nchanges:\n  - line: 1-2\n    removed: |\n      f22f20afca846d8fe9624336df4bad1150e460c3\t\tbranch 'master' of https://github.com/Bladecmd/sovereign-security\n      0289ef9dccf50a8d83d4567fc8107c4eb492ffa0\tnot-for-merge\tbranch 'feat/phase-2d-closure-v11-resilience' of https://github.com/Bladecmd/sovereign-security\nsummary: |\n  Failed to generate summary: API key not configured. Please configure your API key using 'Scratch: Configure API Key' command.\ncontextAware: false\n",
+      "diff": {
+        "type": "FileDiff",
+        "file": "x:\\Pr0\\Sovereign Sec\\.git\\FETCH_HEAD",
+        "timestamp": 1791556042817,
+        "changes": [
+          {
+            "line": "1-2",
+            "added": "",
+            "removed": "f22f20afca846d8fe9624336df4bad1150e460c3\t\tbranch 'master' of https://github.com/Bladecmd/sovereign-security\n0289ef9dccf50a8d83d4567fc8107c4eb492ffa0\tnot-for-merge\tbranch 'feat/phase-2d-closure-v11-resilience' of https://github.com/Bladecmd/sovereign-security",
+            "modified": ""
+          }
+        ],
+        "summary": "Failed to generate summary: API key not configured. Please configure your API key using 'Scratch: Configure API Key' command.",
+        "contextAware": false
+      },
+      "summary": "Failed to generate summary: API key not configured. Please configure your API key using 'Scratch: Configure API Key' command."
+    },
+    {
+      "file": "x:\\Pr0\\Sovereign Sec\\.git\\FETCH_HEAD",
+      "timestamp": 1791556223780,
+      "toonString": "type: FileDiff\nfile: x:\\Pr0\\Sovereign Sec\\.git\\FETCH_HEAD\ntimestamp: 1791556223686\nchanges:\n  - line: 1-2\n    removed: |\n      f22f20afca846d8fe9624336df4bad1150e460c3\t\tbranch 'master' of https://github.com/Bladecmd/sovereign-security\n      0289ef9dccf50a8d83d4567fc8107c4eb492ffa0\tnot-for-merge\tbranch 'feat/phase-2d-closure-v11-resilience' of https://github.com/Bladecmd/sovereign-security\nsummary: |\n  Failed to generate summary: API key not configured. Please configure your API key using 'Scratch: Configure API Key' command.\ncontextAware: false\n",
+      "diff": {
+        "type": "FileDiff",
+        "file": "x:\\Pr0\\Sovereign Sec\\.git\\FETCH_HEAD",
+        "timestamp": 1791556223686,
+        "changes": [
+          {
+            "line": "1-2",
+            "added": "",
+            "removed": "f22f20afca846d8fe9624336df4bad1150e460c3\t\tbranch 'master' of https://github.com/Bladecmd/sovereign-security\n0289ef9dccf50a8d83d4567fc8107c4eb492ffa0\tnot-for-merge\tbranch 'feat/phase-2d-closure-v11-resilience' of https://github.com/Bladecmd/sovereign-security",
+            "modified": ""
+          }
+        ],
+        "summary": "Failed to generate summary: API key not configured. Please configure your API key using 'Scratch: Configure API Key' command.",
+        "contextAware": false
+      },
+      "summary": "Failed to generate summary: API key not configured. Please configure your API key using 'Scratch: Configure API Key' command."
+    },
+    {
+      "file": "x:\\Pr0\\Sovereign Sec\\.git\\FETCH_HEAD",
+      "timestamp": 1791556407666,
+      "toonString": "type: FileDiff\nfile: x:\\Pr0\\Sovereign Sec\\.git\\FETCH_HEAD\ntimestamp: 1791556405243\nchanges:\n  - line: 1-2\n    removed: |\n      f22f20afca846d8fe9624336df4bad1150e460c3\t\tbranch 'master' of https://github.com/Bladecmd/sovereign-security\n      0289ef9dccf50a8d83d4567fc8107c4eb492ffa0\tnot-for-merge\tbranch 'feat/phase-2d-closure-v11-resilience' of https://github.com/Bladecmd/sovereign-security\nsummary: |\n  Failed to generate summary: API key not configured. Please configure your API key using 'Scratch: Configure API Key' command.\ncontextAware: false\n",
+      "diff": {
+        "type": "FileDiff",
+        "file": "x:\\Pr0\\Sovereign Sec\\.git\\FETCH_HEAD",
+        "timestamp": 1791556405243,
+        "changes": [
+          {
+            "line": "1-2",
+            "added": "",
+            "removed": "f22f20afca846d8fe9624336df4bad1150e460c3\t\tbranch 'master' of https://github.com/Bladecmd/sovereign-security\n0289ef9dccf50a8d83d4567fc8107c4eb492ffa0\tnot-for-merge\tbranch 'feat/phase-2d-closure-v11-resilience' of https://github.com/Bladecmd/sovereign-security",
+            "modified": ""
+          }
+        ],
+        "summary": "Failed to generate summary: API key not configured. Please configure your API key using 'Scratch: Configure API Key' command.",
+        "contextAware": false
+      },
+      "summary": "Failed to generate summary: API key not configured. Please configure your API key using 'Scratch: Configure API Key' command."
+    },
+    {
+      "file": "x:\\Pr0\\Sovereign Sec\\.git\\FETCH_HEAD",
+      "timestamp": 1791556587632,
+      "toonString": "type: FileDiff\nfile: x:\\Pr0\\Sovereign Sec\\.git\\FETCH_HEAD\ntimestamp: 1791556587441\nchanges:\n  - line: 1-2\n    removed: |\n      f22f20afca846d8fe9624336df4bad1150e460c3\t\tbranch 'master' of https://github.com/Bladecmd/sovereign-security\n      0289ef9dccf50a8d83d4567fc8107c4eb492ffa0\tnot-for-merge\tbranch 'feat/phase-2d-closure-v11-resilience' of https://github.com/Bladecmd/sovereign-security\nsummary: |\n  Failed to generate summary: API key not configured. Please configure your API key using 'Scratch: Configure API Key' command.\ncontextAware: false\n",
+      "diff": {
+        "type": "FileDiff",
+        "file": "x:\\Pr0\\Sovereign Sec\\.git\\FETCH_HEAD",
+        "timestamp": 1791556587441,
+        "changes": [
+          {
+            "line": "1-2",
+            "added": "",
+            "removed": "f22f20afca846d8fe9624336df4bad1150e460c3\t\tbranch 'master' of https://github.com/Bladecmd/sovereign-security\n0289ef9dccf50a8d83d4567fc8107c4eb492ffa0\tnot-for-merge\tbranch 'feat/phase-2d-closure-v11-resilience' of https://github.com/Bladecmd/sovereign-security",
+            "modified": ""
+          }
+        ],
+        "summary": "Failed to generate summary: API key not configured. Please configure your API key using 'Scratch: Configure API Key' command.",
+        "contextAware": false
+      },
+      "summary": "Failed to generate summary: API key not configured. Please configure your API key using 'Scratch: Configure API Key' command."
+    },
+    {
+      "file": "x:\\Pr0\\Sovereign Sec\\.git\\FETCH_HEAD",
+      "timestamp": 1791556768737,
+      "toonString": "type: FileDiff\nfile: x:\\Pr0\\Sovereign Sec\\.git\\FETCH_HEAD\ntimestamp: 1791556768670\nchanges:\n  - line: 1-2\n    removed: |\n      f22f20afca846d8fe9624336df4bad1150e460c3\t\tbranch 'master' of https://github.com/Bladecmd/sovereign-security\n      0289ef9dccf50a8d83d4567fc8107c4eb492ffa0\tnot-for-merge\tbranch 'feat/phase-2d-closure-v11-resilience' of https://github.com/Bladecmd/sovereign-security\nsummary: |\n  Failed to generate summary: API key not configured. Please configure your API key using 'Scratch: Configure API Key' command.\ncontextAware: false\n",
+      "diff": {
+        "type": "FileDiff",
+        "file": "x:\\Pr0\\Sovereign Sec\\.git\\FETCH_HEAD",
+        "timestamp": 1791556768670,
+        "changes": [
+          {
+            "line": "1-2",
+            "added": "",
+            "removed": "f22f20afca846d8fe9624336df4bad1150e460c3\t\tbranch 'master' of https://github.com/Bladecmd/sovereign-security\n0289ef9dccf50a8d83d4567fc8107c4eb492ffa0\tnot-for-merge\tbranch 'feat/phase-2d-closure-v11-resilience' of https://github.com/Bladecmd/sovereign-security",
+            "modified": ""
+          }
+        ],
+        "summary": "Failed to generate summary: API key not configured. Please configure your API key using 'Scratch: Configure API Key' command.",
+        "contextAware": false
+      },
+      "summary": "Failed to generate summary: API key not configured. Please configure your API key using 'Scratch: Configure API Key' command."
+    },
+    {
+      "file": "x:\\Pr0\\Sovereign Sec\\.git\\FETCH_HEAD",
+      "timestamp": 1791556949838,
+      "toonString": "type: FileDiff\nfile: x:\\Pr0\\Sovereign Sec\\.git\\FETCH_HEAD\ntimestamp: 1791556949710\nchanges:\n  - line: 1-2\n    removed: |\n      f22f20afca846d8fe9624336df4bad1150e460c3\t\tbranch 'master' of https://github.com/Bladecmd/sovereign-security\n      0289ef9dccf50a8d83d4567fc8107c4eb492ffa0\tnot-for-merge\tbranch 'feat/phase-2d-closure-v11-resilience' of https://github.com/Bladecmd/sovereign-security\nsummary: |\n  Failed to generate summary: API key not configured. Please configure your API key using 'Scratch: Configure API Key' command.\ncontextAware: false\n",
+      "diff": {
+        "type": "FileDiff",
+        "file": "x:\\Pr0\\Sovereign Sec\\.git\\FETCH_HEAD",
+        "timestamp": 1791556949710,
+        "changes": [
+          {
+            "line": "1-2",
+            "added": "",
+            "removed": "f22f20afca846d8fe9624336df4bad1150e460c3\t\tbranch 'master' of https://github.com/Bladecmd/sovereign-security\n0289ef9dccf50a8d83d4567fc8107c4eb492ffa0\tnot-for-merge\tbranch 'feat/phase-2d-closure-v11-resilience' of https://github.com/Bladecmd/sovereign-security",
+            "modified": ""
+          }
+        ],
+        "summary": "Failed to generate summary: API key not configured. Please configure your API key using 'Scratch: Configure API Key' command.",
+        "contextAware": false
+      },
+      "summary": "Failed to generate summary: API key not configured. Please configure your API key using 'Scratch: Configure API Key' command."
+    },
+    {
+      "file": "x:\\Pr0\\Sovereign Sec\\.git\\FETCH_HEAD",
+      "timestamp": 1791557131082,
+      "toonString": "type: FileDiff\nfile: x:\\Pr0\\Sovereign Sec\\.git\\FETCH_HEAD\ntimestamp: 1791557131017\nchanges:\n  - line: 1-2\n    removed: |\n      f22f20afca846d8fe9624336df4bad1150e460c3\t\tbranch 'master' of https://github.com/Bladecmd/sovereign-security\n      0289ef9dccf50a8d83d4567fc8107c4eb492ffa0\tnot-for-merge\tbranch 'feat/phase-2d-closure-v11-resilience' of https://github.com/Bladecmd/sovereign-security\nsummary: |\n  Failed to generate summary: API key not configured. Please configure your API key using 'Scratch: Configure API Key' command.\ncontextAware: false\n",
+      "diff": {
+        "type": "FileDiff",
+        "file": "x:\\Pr0\\Sovereign Sec\\.git\\FETCH_HEAD",
+        "timestamp": 1791557131017,
+        "changes": [
+          {
+            "line": "1-2",
+            "added": "",
+            "removed": "f22f20afca846d8fe9624336df4bad1150e460c3\t\tbranch 'master' of https://github.com/Bladecmd/sovereign-security\n0289ef9dccf50a8d83d4567fc8107c4eb492ffa0\tnot-for-merge\tbranch 'feat/phase-2d-closure-v11-resilience' of https://github.com/Bladecmd/sovereign-security",
+            "modified": ""
+          }
+        ],
+        "summary": "Failed to generate summary: API key not configured. Please configure your API key using 'Scratch: Configure API Key' command.",
+        "contextAware": false
+      },
+      "summary": "Failed to generate summary: API key not configured. Please configure your API key using 'Scratch: Configure API Key' command."
+    },
+    {
+      "file": "x:\\Pr0\\Sovereign Sec\\.git\\FETCH_HEAD",
+      "timestamp": 1791557312004,
+      "toonString": "type: FileDiff\nfile: x:\\Pr0\\Sovereign Sec\\.git\\FETCH_HEAD\ntimestamp: 1791557311946\nchanges:\n  - line: 1-2\n    removed: |\n      f22f20afca846d8fe9624336df4bad1150e460c3\t\tbranch 'master' of https://github.com/Bladecmd/sovereign-security\n      0289ef9dccf50a8d83d4567fc8107c4eb492ffa0\tnot-for-merge\tbranch 'feat/phase-2d-closure-v11-resilience' of https://github.com/Bladecmd/sovereign-security\nsummary: |\n  Failed to generate summary: API key not configured. Please configure your API key using 'Scratch: Configure API Key' command.\ncontextAware: false\n",
+      "diff": {
+        "type": "FileDiff",
+        "file": "x:\\Pr0\\Sovereign Sec\\.git\\FETCH_HEAD",
+        "timestamp": 1791557311946,
+        "changes": [
+          {
+            "line": "1-2",
+            "added": "",
+            "removed": "f22f20afca846d8fe9624336df4bad1150e460c3\t\tbranch 'master' of https://github.com/Bladecmd/sovereign-security\n0289ef9dccf50a8d83d4567fc8107c4eb492ffa0\tnot-for-merge\tbranch 'feat/phase-2d-closure-v11-resilience' of https://github.com/Bladecmd/sovereign-security",
+            "modified": ""
+          }
+        ],
+        "summary": "Failed to generate summary: API key not configured. Please configure your API key using 'Scratch: Configure API Key' command.",
+        "contextAware": false
+      },
+      "summary": "Failed to generate summary: API key not configured. Please configure your API key using 'Scratch: Configure API Key' command."
+    },
+    {
+      "file": "x:\\Pr0\\Sovereign Sec\\.git\\FETCH_HEAD",
+      "timestamp": 1791557492894,
+      "toonString": "type: FileDiff\nfile: x:\\Pr0\\Sovereign Sec\\.git\\FETCH_HEAD\ntimestamp: 1791557492831\nchanges:\n  - line: 1-2\n    removed: |\n      f22f20afca846d8fe9624336df4bad1150e460c3\t\tbranch 'master' of https://github.com/Bladecmd/sovereign-security\n      0289ef9dccf50a8d83d4567fc8107c4eb492ffa0\tnot-for-merge\tbranch 'feat/phase-2d-closure-v11-resilience' of https://github.com/Bladecmd/sovereign-security\nsummary: |\n  Failed to generate summary: API key not configured. Please configure your API key using 'Scratch: Configure API Key' command.\ncontextAware: false\n",
+      "diff": {
+        "type": "FileDiff",
+        "file": "x:\\Pr0\\Sovereign Sec\\.git\\FETCH_HEAD",
+        "timestamp": 1791557492831,
+        "changes": [
+          {
+            "line": "1-2",
+            "added": "",
+            "removed": "f22f20afca846d8fe9624336df4bad1150e460c3\t\tbranch 'master' of https://github.com/Bladecmd/sovereign-security\n0289ef9dccf50a8d83d4567fc8107c4eb492ffa0\tnot-for-merge\tbranch 'feat/phase-2d-closure-v11-resilience' of https://github.com/Bladecmd/sovereign-security",
+            "modified": ""
+          }
+        ],
+        "summary": "Failed to generate summary: API key not configured. Please configure your API key using 'Scratch: Configure API Key' command.",
+        "contextAware": false
+      },
+      "summary": "Failed to generate summary: API key not configured. Please configure your API key using 'Scratch: Configure API Key' command."
+    },
+    {
+      "file": "x:\\Pr0\\Sovereign Sec\\.git\\FETCH_HEAD",
+      "timestamp": 1791557673786,
+      "toonString": "type: FileDiff\nfile: x:\\Pr0\\Sovereign Sec\\.git\\FETCH_HEAD\ntimestamp: 1791557673713\nchanges:\n  - line: 1-2\n    removed: |\n      f22f20afca846d8fe9624336df4bad1150e460c3\t\tbranch 'master' of https://github.com/Bladecmd/sovereign-security\n      0289ef9dccf50a8d83d4567fc8107c4eb492ffa0\tnot-for-merge\tbranch 'feat/phase-2d-closure-v11-resilience' of https://github.com/Bladecmd/sovereign-security\nsummary: |\n  Failed to generate summary: API key not configured. Please configure your API key using 'Scratch: Configure API Key' command.\ncontextAware: false\n",
+      "diff": {
+        "type": "FileDiff",
+        "file": "x:\\Pr0\\Sovereign Sec\\.git\\FETCH_HEAD",
+        "timestamp": 1791557673713,
+        "changes": [
+          {
+            "line": "1-2",
+            "added": "",
+            "removed": "f22f20afca846d8fe9624336df4bad1150e460c3\t\tbranch 'master' of https://github.com/Bladecmd/sovereign-security\n0289ef9dccf50a8d83d4567fc8107c4eb492ffa0\tnot-for-merge\tbranch 'feat/phase-2d-closure-v11-resilience' of https://github.com/Bladecmd/sovereign-security",
+            "modified": ""
+          }
+        ],
+        "summary": "Failed to generate summary: API key not configured. Please configure your API key using 'Scratch: Configure API Key' command.",
+        "contextAware": false
+      },
+      "summary": "Failed to generate summary: API key not configured. Please configure your API key using 'Scratch: Configure API Key' command."
+    }
+  ],
+  "lastUpdated": 1791557673786
+}
