@@ -1,0 +1,17 @@
+﻿# Prevent old chat transcripts from polluting @Codebase vector search
+.cursor/history/
+
+# Never index raw secret files in cloud embeddings
+.env
+.env.*
+!.env.example
+
+# Ignore heavy/temp artifacts
+.scratch/
+mcp-state.json
+*.webp
+*.mp4
+node_modules/
+.venv/
+venv/
+__pycache__/
