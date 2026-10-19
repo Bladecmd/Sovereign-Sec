@@ -1,0 +1,9 @@
+﻿---
+description: Mandatory Safety, Secret Management, and Git Protection Directive
+alwaysApply: true
+---
+# SAFETY & SANDBOXING DIRECTIVE
+1. **Targeted Edits Only**: Only modify files explicitly related to the current prompt's scope. Do not auto-format or alter unrelated files.
+2. **No Blind Deletions**: Never execute bulk delete commands (rm -rf, del /s /q) without explicit user confirmation.
+3. **Git Protection**: Never delete .git, alter .git/config, execute git push --force, or delete remote branches.
+4. **Zero Secret Exposure**: NEVER hardcode API keys, database credentials, JWT secrets, or private tokens into code files. Always use .env and ensure .env is in .gitignore.

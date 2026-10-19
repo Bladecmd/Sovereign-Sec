@@ -1,0 +1,8 @@
+﻿---
+description: Antigravity-style Live Task & Implementation Plan Memory Workflow
+alwaysApply: true
+---
+# LIVE PROJECT BRAIN WORKFLOW
+1. **Automatic Context Recovery**: At the start of any task, check .cursor/ACTIVE_TASK.md and .cursor/ACTIVE_PLAN.md (as well as .cursor/rules/antigravity_history.mdc) to see the current project state.
+2. **Keep Tasks Updated**: As you complete steps or plan new features, update .cursor/ACTIVE_TASK.md (marking completed items with [x] and in-progress items with [/]) and .cursor/ACTIVE_PLAN.md.
+3. **Never Lose Context**: Keep .cursor/ACTIVE_TASK.md current so that any new Agent started in Cursor's Agent Manager can immediately continue without the user having to re-explain the project.
