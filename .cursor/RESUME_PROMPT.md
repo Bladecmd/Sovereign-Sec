@@ -1,25 +1,30 @@
-﻿# Deep Context Handover Protocol
+﻿# Final Master Handover & Operating Protocol
 
-You are taking over development of this project following a migration from Antigravity to Cursor. Before making any code changes, perform a Deep Context & Ground-Truth Audit in 3 steps:
+You are the lead engineer taking over this project inside Cursor following our migration from Antigravity.
 
-### STEP 1: Read the Active State & Latest Handover Context
-1. Read .cursor/PROJECT_CONTEXT.md, .cursor/ACTIVE_TASK.md, and .cursor/ACTIVE_PLAN.md (if they exist).
-2. Check the most recent session folder inside .cursor/history/ (sorted by date):
-   - Read its walkthrough.md and task.md if present.
-   - Read the last ~150 lines of its full_conversation.md to capture the exact final problem, bug, or feature we were working on when the session ended.
-   - (Do NOT read older session folders in .cursor/history/ unless you hit a specific architectural question that requires historical context.)
+### MANDATORY OPERATING RULES (ACTIVE FOR THIS ENTIRE SESSION)
+1. **Zero-Trust Sandboxing**: Stay strictly confined to this project root (`./`). Never traverse outside `./`, never hardcode secrets/API keys (use `.env` and document keys in `.env.example`), and never run destructive deletions or `git push --force`.
+2. **Truth Over Documentation**: Treat the actual source code on disk as the ground truth. Never assume a task in `.cursor/ACTIVE_TASK.md` is finished without verifying the code, and never use stubbed/mocked business logic when implementing features.
+3. **Continuous Memory Sync**: At the end of every completed task or bug fix during our session, automatically update `.cursor/ACTIVE_TASK.md` (check off `[x]` completed items, add new sub-tasks as `[ ]`, and keep the exact next step at the top).
 
-### STEP 2: Verify Against Actual Code on Disk (Truth over Docs)
-1. Inspect the project structure, dependency manifests (package.json, requirements.txt, pyproject.toml, .env.example, etc.), and run git status + git log -n 5 --oneline.
-2. Cross-reference the checklist in ACTIVE_TASK.md against the actual source code files:
-   - Identify if any task marked [ ] is actually already implemented in the code.
-   - Identify if any task marked [x] is incomplete, stubbed/mocked, or has broken imports/TODOs.
+---
 
-### STEP 3: Output Your Deep Handover Report (Do Not Edit Files Yet)
-Present a structured briefing with:
-1. Architecture & Tech Stack: How this project is structured, key entry points, and required environment variables (from .env.example).
-2. Where We Left Off (Exact State): What was accomplished in the last Antigravity session and the exact point where work paused.
-3. Code vs. Plan Discrepancies: Any mismatches between ACTIVE_TASK.md and the real code on disk, plus any immediate bugs, missing dependencies, or risks you spotted.
-4. Top 3 Next Actions: The exact next steps in priority order, specifying which files need to be created or modified first.
+### PHASE 1: DEEP CONTEXT & GROUND-TRUTH AUDIT (DO NOT EDIT CODE YET)
+Execute these 3 steps right now:
 
-Stop after outputting this report and wait for my confirmation on which action to execute first.
+1. **Read Project & Ecosystem Context**:
+   - Read `.cursor/PROJECT_CONTEXT.md`, `.cursor/ECOSYSTEM_MAP.md`, `.cursor/ACTIVE_TASK.md`, and `.cursor/ACTIVE_PLAN.md` (if present).
+   - Check the newest session folder inside `.cursor/history/` (sorted by date): read its `walkthrough.md` / `task.md` and the last ~150 lines of `full_conversation.md` to see the exact state when the last session ended. *(Do not read older folders in `.cursor/history/` unless needed to answer a specific design question.)*
+
+2. **Audit the Actual Codebase on Disk**:
+   - Inspect the directory tree, dependency manifests (`package.json`, `requirements.txt`, `pyproject.toml`, `.env.example`), and run `git status` and `git log -n 5 --oneline`.
+   - Cross-check `.cursor/ACTIVE_TASK.md` against the real code files on disk: find any `[ ]` items that are already coded, and any `[x]` items that are broken, stubbed, or incomplete.
+
+3. **Present Your Executive Handover Briefing**:
+   Output a clear, structured report covering:
+   - **1. Architecture & Ecosystem Role**: Tech stack, entry points, required `.env` keys, and how this repo connects to sibling projects in `.cursor/ECOSYSTEM_MAP.md`.
+   - **2. Exact Stopping Point**: What was accomplished in the last session and the exact file/problem where work paused.
+   - **3. Code vs. Plan Reality Check**: Discrepancies between `ACTIVE_TASK.md` and the actual code on disk, plus any broken imports, missing dependencies, or bugs found.
+   - **4. Ranked Action Plan (Top 3 Next Steps)**: The exact next 3 engineering tasks in priority order, listing the specific files to create or modify.
+
+**STOP after outputting this briefing and wait for my command on whether to execute Action #1.**
