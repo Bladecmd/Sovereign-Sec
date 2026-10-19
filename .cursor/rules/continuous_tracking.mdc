@@ -1,0 +1,11 @@
+﻿---
+description: Continuous task tracking and handover maintenance
+globs: 
+alwaysApply: true
+---
+# Continuous State Tracking
+
+1. **Start of Session**: If the user asks to resume or check status, follow `.cursor/RESUME_PROMPT.md` to verify `.cursor/ACTIVE_TASK.md` against actual code on disk.
+2. **End of Milestone**: Whenever you finish implementing a feature or fixing a bug:
+   - Update `.cursor/ACTIVE_TASK.md` (mark completed items `[x]` and add newly discovered sub-tasks as `[ ]`).
+   - Never leave `.cursor/ACTIVE_TASK.md` out of sync with the codebase.
