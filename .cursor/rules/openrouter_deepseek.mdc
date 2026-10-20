@@ -1,17 +1,21 @@
 ﻿---
-description: OpenRouter + DeepSeek via Render Environment Variables
+description: OpenRouter + DeepSeek via Render Environment Group (openrouter-deepseek)
 globs: 
 alwaysApply: true
 ---
-# OpenRouter, DeepSeek & Render Secret Management
+# OpenRouter, DeepSeek & Render Env Group Standard
 
-1. **Secrets Live in Render (Production Source of Truth)**:
-   - Live API keys (`OPENROUTER_API_KEY`, DB credentials, etc.) are stored securely in **Render Environment Variables / Environment Groups**, NOT hardcoded or committed locally.
-   - Never ask the user to paste live keys into chat or source files.
-   - Ensure backend code reads variables dynamically from the environment (`os.environ.get("OPENROUTER_API_KEY")` in Python or `process.env.OPENROUTER_API_KEY` in Node.js) with graceful fallback/error messages if missing locally.
-   - Frontend clients (`compliancelabs-frontend`, `frontend`, etc.) must NEVER call OpenRouter directly or expose `OPENROUTER_API_KEY` in `VITE_` / `NEXT_PUBLIC_` variables; always proxy LLM requests through the Render backend service.
-
-2. **OpenRouter + DeepSeek Defaults**:
-   - **Base URL**: `process.env.OPENROUTER_BASE_URL` or `https://openrouter.ai/api/v1`
-   - **Primary Chat/Coding Model**: `process.env.DEEPSEEK_MODEL` or `deepseek/deepseek-chat` (DeepSeek V3)
-   - **Reasoning Model**: `process.env.DEEPSEEK_REASONER_MODEL` or `deepseek/deepseek-r1` (DeepSeek R1)
+1. **Render Environment Group (`openrouter-deepseek`)**:
+   - Live API keys are stored in Render inside the **`openrouter-deepseek`** Environment Group, NEVER hardcoded or stored in git.
+   - If creating or updating a `render.yaml` Blueprint for any backend service that uses AI/LLMs, link the group under `envVars`:
+     ```yaml
+     envVars:
+       - fromGroup: openrouter-deepseek
+     ```
+2. **Standard Environment Variables Provided by `openrouter-deepseek`**:
+   - `OPENROUTER_API_KEY`: Secret API key (read via `os.environ.get("OPENROUTER_API_KEY")` or `process.env.OPENROUTER_API_KEY`)
+   - `OPENROUTER_BASE_URL`: `https://openrouter.ai/api/v1`
+   - `DEEPSEEK_MODEL`: `deepseek/deepseek-chat` (DeepSeek V3 for fast coding/chat/agents)
+   - `DEEPSEEK_REASONER_MODEL`: `deepseek/deepseek-r1` (DeepSeek R1 for reasoning)
+3. **Frontend Security**:
+   - Frontend apps (`compliancelabs-frontend`, `frontend`, etc.) must NEVER expose `OPENROUTER_API_KEY` to the browser; always route AI calls through a Render backend service linked to `openrouter-deepseek`.
