@@ -29,6 +29,7 @@ import { safeValidateSecurityAlert, validateSecurityAlert } from '../schemas/ale
 import { safeValidateSecurityEvent } from '../schemas/event.schema.js';
 import { TelemetryBroadcaster } from './sse.js';
 import { ApplicationRateLimiter } from './rate-limiter.js';
+import { IngressAuthenticator, ServerAuthOptions, AuthenticatedSubject } from './auth.js';
 
 export class SovereignSecurityApiHandler {
   private policyEngine: PolicyEngine;
@@ -47,6 +48,7 @@ export class SovereignSecurityApiHandler {
   private broadcaster: TelemetryBroadcaster;
   private logger: StructuredLogger;
   private rateLimiter: ApplicationRateLimiter;
+  private authenticator: IngressAuthenticator;
   private dashboardHtmlCache: string | null = null;
   private bootTimestamp: string = new Date().toISOString();
 
@@ -63,6 +65,7 @@ export class SovereignSecurityApiHandler {
     broadcaster?: TelemetryBroadcaster;
     logger?: StructuredLogger;
     rateLimiter?: ApplicationRateLimiter;
+    auth?: IngressAuthenticator | ServerAuthOptions;
   }) {
     this.persistentLedger = options?.persistentLedger;
     this.auditService =
@@ -89,6 +92,9 @@ export class SovereignSecurityApiHandler {
     this.logger =
       options?.logger || new StructuredLogger({ serviceName: 'sovereign-security-api' });
     this.rateLimiter = options?.rateLimiter || new ApplicationRateLimiter();
+    this.authenticator = options?.auth instanceof IngressAuthenticator
+      ? options.auth
+      : new IngressAuthenticator(options?.auth);
   }
 
   public getRateLimiter(): ApplicationRateLimiter {
@@ -131,14 +137,7 @@ export class SovereignSecurityApiHandler {
     res.setHeader('X-RateLimit-Remaining', limitCheck.remainingRequests.toString());
 
     try {
-      if (method === 'GET' && (url.pathname === '/' || url.pathname === '/dashboard')) {
-        const html = this.getDashboardHtml();
-        res.setHeader('Content-Type', 'text/html; charset=utf-8');
-        res.statusCode = 200;
-        res.end(html);
-        return;
-      }
-
+      // 1. Public Monitoring & Probe Endpoints (Unauthenticated)
       if (method === 'GET' && (url.pathname === '/favicon.ico' || url.pathname === '/favicon.svg')) {
         const svg = this.getFaviconSvg();
         res.setHeader('Content-Type', 'image/svg+xml');
@@ -148,22 +147,9 @@ export class SovereignSecurityApiHandler {
         return;
       }
 
-      if (method === 'GET' && url.pathname === '/api/v1/events/stream') {
-        this.broadcaster.addClient(res);
-        return;
-      }
-
-      if (method === 'GET' && url.pathname === '/metrics') {
-        res.setHeader('Content-Type', 'text/plain; version=0.0.4; charset=utf-8');
-        res.statusCode = 200;
-        res.end(globalMetrics.toPrometheusString());
-        return;
-      }
-
-      res.setHeader('Content-Type', 'application/json');
-
       if (method === 'GET' && url.pathname === '/health') {
         const memory = process.memoryUsage();
+        res.setHeader('Content-Type', 'application/json');
         return this.sendJson(res, 200, {
           status: 'UP',
           service: 'sovereign-security',
@@ -184,6 +170,7 @@ export class SovereignSecurityApiHandler {
       if (method === 'GET' && url.pathname === '/ready') {
         const auditVerification = this.auditService.verifyIntegrity();
         const isReady = auditVerification.isValid;
+        res.setHeader('Content-Type', 'application/json');
 
         const responsePayload = {
           ready: isReady,
@@ -203,6 +190,86 @@ export class SovereignSecurityApiHandler {
 
         return this.sendJson(res, isReady ? 200 : 503, responsePayload);
       }
+
+      // 2. Protected Root & Dashboard UI
+      if (method === 'GET' && (url.pathname === '/' || url.pathname === '/dashboard')) {
+        if (this.authenticator.isDashboardDisabled()) {
+          res.setHeader('Content-Type', 'application/json');
+          return this.sendJson(res, 404, {
+            error: 'NOT_FOUND',
+            message: 'Dashboard and documentation routes are disabled in this environment.',
+          });
+        }
+
+        if (this.authenticator.isDashboardProtected() || this.authenticator.isEnforced()) {
+          const authResult = await this.authenticator.authenticate(req);
+          if (!authResult.authenticated) {
+            res.setHeader('WWW-Authenticate', 'Basic realm="Sovereign Security SOC Dashboard"');
+            res.setHeader('Content-Type', 'text/html; charset=utf-8');
+            res.statusCode = 401;
+            res.end('<!DOCTYPE html><html><head><title>401 Unauthorized</title></head><body style="background:#0a0e17;color:#f0f6fc;font-family:sans-serif;padding:2rem;text-align:center;"><h1>401 Unauthorized</h1><p>Authentication credentials required to access the Sovereign Security SOC Dashboard.</p></body></html>');
+            return;
+          }
+        }
+
+        const html = this.getDashboardHtml();
+        res.setHeader('Content-Type', 'text/html; charset=utf-8');
+        res.statusCode = 200;
+        res.end(html);
+        return;
+      }
+
+      // 3. Protected API & Telemetry Routes: Enforce Ingress Authentication
+      let rawBodyForAuth: string | undefined;
+      if (req.headers['x-signature'] && (method === 'POST' || method === 'PUT')) {
+        rawBodyForAuth = await this.readRawBody(req);
+      }
+
+      const authResult = await this.authenticator.authenticate(req, rawBodyForAuth);
+      if (!authResult.authenticated && this.authenticator.isEnforced()) {
+        res.setHeader('Content-Type', 'application/json');
+        return this.sendJson(res, authResult.statusCode || 401, {
+          error: authResult.error || 'AUTHENTICATION_REQUIRED',
+          message: authResult.message || 'Authentication credentials are required to access this protected endpoint.',
+        });
+      }
+
+      const subject: AuthenticatedSubject = authResult.subject || {
+        id: (req.headers['x-actor-id'] as string) || 'sec-admin-default',
+        name: 'Default Administrator',
+        role: 'ADMIN',
+        roles: ['ADMIN'],
+        permissions: ['READ', 'WRITE', 'EXECUTE', 'ADMINISTER'],
+        authMethod: 'API_KEY',
+      };
+
+      if (method === 'GET' && url.pathname === '/api/v1/events/stream') {
+        if (!subject.permissions.includes('READ')) {
+          res.setHeader('Content-Type', 'application/json');
+          return this.sendJson(res, 403, {
+            error: 'AUTHORIZATION_DENIED',
+            message: 'Insufficient permissions to subscribe to event stream.',
+          });
+        }
+        this.broadcaster.addClient(res);
+        return;
+      }
+
+      if (method === 'GET' && url.pathname === '/metrics') {
+        if (!subject.permissions.includes('READ')) {
+          res.setHeader('Content-Type', 'application/json');
+          return this.sendJson(res, 403, {
+            error: 'AUTHORIZATION_DENIED',
+            message: 'Insufficient permissions to scrape metrics.',
+          });
+        }
+        res.setHeader('Content-Type', 'text/plain; version=0.0.4; charset=utf-8');
+        res.statusCode = 200;
+        res.end(globalMetrics.toPrometheusString());
+        return;
+      }
+
+      res.setHeader('Content-Type', 'application/json');
 
       if (method === 'POST' && url.pathname === '/api/v1/decisions/evaluate') {
         const body = (await this.readJsonBody(req)) as SecurityDecisionInput;
@@ -321,13 +388,23 @@ export class SovereignSecurityApiHandler {
       }
 
       if (method === 'POST' && url.pathname === '/api/v1/policy/evaluate') {
-        const body = await this.readJsonBody(req);
-        const decision = this.policyEngine.evaluate(body as PolicyEvaluationInput);
+        const rawBody = (await this.readJsonBody(req)) as any;
+        const evalInput: PolicyEvaluationInput = {
+          actor: rawBody.actor || { id: subject.id, type: subject.role, roles: subject.roles, tenantId: 'default' },
+          resource: rawBody.resource || 'unknown',
+          action: rawBody.action || 'read',
+          context: rawBody.context || {
+            environment: 'production',
+            timestamp: new Date().toISOString(),
+          },
+          riskScore: typeof rawBody.riskScore === 'number' ? rawBody.riskScore : 0,
+        };
+        const decision = this.policyEngine.evaluate(evalInput);
 
         this.recordAudit({
-          who: (body as PolicyEvaluationInput).actor?.id || 'unknown-actor',
-          what: `POLICY_EVALUATION:${(body as PolicyEvaluationInput).action}`,
-          where: (body as PolicyEvaluationInput).resource || 'unknown-resource',
+          who: evalInput.actor?.id || 'unknown-actor',
+          what: `POLICY_EVALUATION:${evalInput.action}`,
+          where: evalInput.resource || 'unknown-resource',
           why: 'Runtime policy evaluation request',
           result: decision.decision === 'ALLOW' ? 'SUCCESS' : 'DENIED',
           details: { decision: decision.decision, reason: decision.reason },
@@ -606,18 +683,29 @@ export class SovereignSecurityApiHandler {
       ) {
         const body = (await this.readJsonBody(req)) as any;
         const targetQuarantineId = body.quarantineId;
-        const callerId = body.callerId || body.releasedBy;
-        const role = body.role || 'SECURITY_OPERATOR';
+
+        let callerId: string;
+        let role: string;
+
+        if (this.authenticator.isEnforced() || authResult.authenticated) {
+          // Strictly bind to authenticated identity; client body is ignored
+          callerId = subject.id;
+          role = subject.role;
+        } else {
+          // Backward compatibility when ingress auth enforcement is disabled
+          if (!body.callerId) {
+            return this.sendJson(res, 401, {
+              error: 'AUTHENTICATION_REQUIRED',
+              message: 'Field "callerId" or client authentication is required to release containment.',
+            });
+          }
+          callerId = body.callerId;
+          role = body.role || 'UNPRIVILEGED_GUEST';
+        }
+
         const reason = body.reason || body.releaseReason;
         const confirmed =
           body.confirmed !== undefined ? body.confirmed : (body.releaseReason ? true : false);
-
-        if (!callerId || typeof callerId !== 'string' || callerId.trim().length === 0) {
-          return this.sendJson(res, 401, {
-            error: 'AUTHENTICATION_REQUIRED',
-            message: 'Authenticated user (callerId) is required to request quarantine release.',
-          });
-        }
 
         if (!targetQuarantineId) {
           return this.sendJson(res, 400, {
@@ -640,8 +728,10 @@ export class SovereignSecurityApiHandler {
           });
         }
 
-        const isPrivileged =
-          role === 'SOC_ADMIN' || role === 'SECURITY_LEAD' || role === 'ADMIN';
+        // Authorize strictly using verified server-side subject role
+        const isPrivileged = (this.authenticator.isEnforced() || authResult.authenticated)
+          ? (subject.role === 'ADMIN' || subject.roles.includes('ADMIN'))
+          : (role === 'ADMIN' || role === 'SOC_ADMIN');
 
         const decisionInput: SecurityDecisionInput = {
           actor: {
@@ -813,9 +903,9 @@ export class SovereignSecurityApiHandler {
           totalAuditRecords: auditVerification.totalRecords,
           ecosystemHardeningScore: posture.overallHardeningScore,
           complianceCertifications: {
-            NIST_SP_800_207: 'CERTIFIED',
-            SOC2_TYPE_II: 'CERTIFIED',
-            ISO_IEC_27001_2022: 'CERTIFIED',
+            NIST_SP_800_207: 'INTERNAL_SELF_ASSESSMENT',
+            SOC2_TYPE_II: 'NOT_CERTIFIED',
+            ISO_IEC_27001_2022: 'NOT_CERTIFIED',
           },
         };
         return this.sendJson(res, 200, summary);
@@ -970,8 +1060,12 @@ export class SovereignSecurityApiHandler {
 
       if (method === 'POST' && url.pathname === '/api/v1/soc/agents/command') {
         const body = (await this.readJsonBody(req)) as any;
-        const callerId = body.callerId || (req.headers['x-actor-id'] as string) || 'soc-operator';
-        const role = body.role || 'SECURITY_OPERATOR';
+        const callerId = (this.authenticator.isEnforced() || authResult.authenticated)
+          ? subject.id
+          : (body.callerId || 'anonymous');
+        const role = (this.authenticator.isEnforced() || authResult.authenticated)
+          ? subject.role
+          : (body.role || 'UNPRIVILEGED_GUEST');
         const command = body.command;
 
         if (!command) {
@@ -981,10 +1075,14 @@ export class SovereignSecurityApiHandler {
           });
         }
 
-        if (role === 'UNPRIVILEGED_GUEST') {
+        const isPermitted = (this.authenticator.isEnforced() || authResult.authenticated)
+          ? (subject.role === 'ADMIN' || subject.roles.includes('ADMIN') || subject.permissions.includes('EXECUTE'))
+          : (role === 'ADMIN' || role === 'SOC_ADMIN' || role === 'SECURITY_LEAD');
+
+        if (!isPermitted || body.role === 'UNPRIVILEGED_GUEST') {
           return this.sendJson(res, 403, {
             error: 'AUTHORIZATION_DENIED',
-            message: `Role ${role} is not permitted to execute agent commands.`,
+            message: `Subject ${callerId} (role ${role}) is not permitted to execute agent commands.`,
           });
         }
 
@@ -1089,14 +1187,17 @@ export class SovereignSecurityApiHandler {
         });
       }
 
+      const sanitizedMsg = errorMsg
+        .replace(/(?:key|secret|token|password|bearer)[=:\s]+['"]?[a-zA-Z0-9_\-\.]{8,}['"]?/gi, '[REDACTED]');
+
       this.logger.error('req-error', 'handleRequest', correlationId, {
         code: 'INTERNAL_SERVER_ERROR',
-        message: errorMsg,
+        message: sanitizedMsg,
       });
 
       return this.sendJson(res, 500, {
         error: 'INTERNAL_SERVER_ERROR',
-        message: errorMsg,
+        message: sanitizedMsg,
       });
     }
   }
@@ -1156,7 +1257,10 @@ export class SovereignSecurityApiHandler {
 
   public static readonly MAX_BODY_SIZE_BYTES = 1024 * 1024; // 1MB
 
-  private async readJsonBody(req: IncomingMessage): Promise<unknown> {
+  private async readRawBody(req: IncomingMessage): Promise<string> {
+    if ((req as any)._rawBody !== undefined) {
+      return (req as any)._rawBody;
+    }
     return new Promise((resolve, reject) => {
       let raw = '';
       let bytesReceived = 0;
@@ -1174,19 +1278,30 @@ export class SovereignSecurityApiHandler {
         raw += chunk;
       });
       req.on('end', () => {
-        if (!raw.trim()) {
-          resolve({});
-          return;
-        }
-        try {
-          resolve(JSON.parse(raw));
-        } catch {
-          const err = new Error('Malformed JSON payload received');
-          (err as any).code = 'MALFORMED_JSON';
-          reject(err);
-        }
+        (req as any)._rawBody = raw;
+        resolve(raw);
       });
       req.on('error', reject);
     });
+  }
+
+  private async readJsonBody(req: IncomingMessage): Promise<unknown> {
+    if ((req as any)._parsedBody !== undefined) {
+      return (req as any)._parsedBody;
+    }
+    const raw = await this.readRawBody(req);
+    if (!raw.trim()) {
+      (req as any)._parsedBody = {};
+      return {};
+    }
+    try {
+      const parsed = JSON.parse(raw);
+      (req as any)._parsedBody = parsed;
+      return parsed;
+    } catch {
+      const err = new Error('Malformed JSON payload received');
+      (err as any).code = 'MALFORMED_JSON';
+      throw err;
+    }
   }
 }

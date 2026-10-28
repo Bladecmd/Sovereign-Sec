@@ -144,9 +144,9 @@ export class SovereignSecPlatform {
       totalAuditRecords: auditVerification.totalRecords,
       ecosystemHardeningScore: postureReport.overallHardeningScore,
       complianceCertifications: {
-        NIST_SP_800_207: 'CERTIFIED',
-        SOC2_TYPE_II: 'CERTIFIED',
-        ISO_IEC_27001_2022: 'CERTIFIED',
+        NIST_SP_800_207: 'INTERNAL_SELF_ASSESSMENT',
+        SOC2_TYPE_II: 'NOT_CERTIFIED',
+        ISO_IEC_27001_2022: 'NOT_CERTIFIED',
       },
     };
   }

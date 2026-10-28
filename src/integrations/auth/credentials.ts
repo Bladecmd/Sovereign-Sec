@@ -64,38 +64,59 @@ export class EcosystemAuthenticator {
     this.replayStore = new InMemoryReplayProtectionStore();
   }
 
+  /**
+   * Ecosystem entities registry.
+   * Secret keys are loaded strictly from environment variables without hardcoded production fallbacks.
+   */
   public static readonly AUTHORIZED_ENTITIES: Record<string, AuthenticatedEntity> = {
     'sovereign-os': {
       serviceId: 'sovereign-os',
       businessId: 'sovereign-core-hq',
       displayName: 'Sovereign OS Kernel & Executive Services',
-      secretKey: 'sec_key_sovereign_os_prod_secret',
+      secretKey: process.env.SOVEREIGN_OS_SECRET_KEY || '',
     },
     'metro-task-force': {
       serviceId: 'metro-task-force',
       businessId: 'mtf-hq',
       displayName: 'Metro Task Force Operations & Telemetry Feed',
-      secretKey: 'sec_key_mtf_telemetry_prod_secret',
+      secretKey: process.env.MTF_TELEMETRY_SECRET_KEY || '',
     },
     'compliance-labs': {
       serviceId: 'compliance-labs',
       businessId: 'compliance-labs-inc',
       displayName: 'Compliance Labs Audit & Attestation Gateway',
-      secretKey: 'sec_key_compliance_labs_audit_secret',
+      secretKey: process.env.COMPLIANCE_LABS_SECRET_KEY || '',
     },
     'audioblue': {
       serviceId: 'audioblue',
       businessId: 'audioblue-media',
       displayName: 'AudioBlue Media CI/CD & Build Pipeline',
-      secretKey: 'sec_key_audioblue_build_secret',
+      secretKey: process.env.AUDIOBLUE_BUILD_SECRET_KEY || '',
     },
     'gridd-corp': {
       serviceId: 'gridd-corp',
       businessId: 'gridd-holding-corp',
       displayName: 'GriDD Corporation Fleet Governance & Posture Aggregator',
-      secretKey: 'sec_key_gridd_corp_governance_secret',
+      secretKey: process.env.GRIDD_CORP_SECRET_KEY || '',
     },
   };
+
+  /**
+   * Programmatically configure secret key for an entity (for testing or bootstrap)
+   */
+  public static configureEntitySecret(serviceId: string, secretKey: string): void {
+    if (this.AUTHORIZED_ENTITIES[serviceId]) {
+      this.AUTHORIZED_ENTITIES[serviceId].secretKey = secretKey;
+    }
+  }
+
+  /**
+   * Check if an entity has a configured secret key
+   */
+  public static isEntityConfigured(serviceId: string): boolean {
+    const entity = this.AUTHORIZED_ENTITIES[serviceId];
+    return Boolean(entity && entity.secretKey && entity.secretKey.trim().length > 0);
+  }
 
   /**
    * Validates ecosystem request credentials against zero-trust registry (Synchronous)
@@ -115,7 +136,16 @@ export class EcosystemAuthenticator {
       };
     }
 
-    // 2. Validate business identity binding
+    // 2. Fail safe if secret key is not configured in environment
+    if (!entity.secretKey || entity.secretKey.trim().length === 0) {
+      return {
+        authenticated: false,
+        errorCode: 'INVALID_API_KEY',
+        errorMessage: `Secret key for service '${creds.serviceId}' is not configured in the host environment. Authentication failed safely.`,
+      };
+    }
+
+    // 3. Validate business identity binding
     if (entity.businessId !== creds.businessId) {
       return {
         authenticated: false,
@@ -124,7 +154,7 @@ export class EcosystemAuthenticator {
       };
     }
 
-    // 3. Timestamp freshness check (anti-replay / expiration)
+    // 4. Timestamp freshness check (anti-replay / expiration)
     const requestTime = new Date(creds.timestamp).getTime();
     const now = Date.now();
     if (isNaN(requestTime) || Math.abs(now - requestTime) > this.MAX_CLOCK_SKEW_MS) {
@@ -135,7 +165,7 @@ export class EcosystemAuthenticator {
       };
     }
 
-    // 4. Nonce replay check (fail-closed on store exception)
+    // 5. Nonce replay check (fail-closed on store exception)
     const store = customStore || this.replayStore;
     try {
       const consumed = store.consume(creds.nonce, this.MAX_CLOCK_SKEW_MS);
@@ -161,7 +191,7 @@ export class EcosystemAuthenticator {
       };
     }
 
-    // 5. Signature verification (if signature provided or payload provided)
+    // 6. Signature verification (if signature provided or payload provided)
     if (creds.signature && rawBodyToVerify !== undefined) {
       const expectedSignature = this.createSignature(
         entity.secretKey,
@@ -178,6 +208,16 @@ export class EcosystemAuthenticator {
           authenticated: false,
           errorCode: 'INVALID_SIGNATURE',
           errorMessage: 'Cryptographic HMAC-SHA256 signature verification failed.',
+        };
+      }
+    } else if (creds.apiKey) {
+      const keyBuffer = Buffer.from(creds.apiKey);
+      const expectedBuffer = Buffer.from(entity.secretKey);
+      if (keyBuffer.length !== expectedBuffer.length || !timingSafeEqual(keyBuffer, expectedBuffer)) {
+        return {
+          authenticated: false,
+          errorCode: 'INVALID_API_KEY',
+          errorMessage: 'Invalid API key provided for ecosystem service.',
         };
       }
     }
@@ -206,7 +246,16 @@ export class EcosystemAuthenticator {
       };
     }
 
-    // 2. Validate business identity binding
+    // 2. Fail safe if secret key is not configured in environment
+    if (!entity.secretKey || entity.secretKey.trim().length === 0) {
+      return {
+        authenticated: false,
+        errorCode: 'INVALID_API_KEY',
+        errorMessage: `Secret key for service '${creds.serviceId}' is not configured in the host environment. Authentication failed safely.`,
+      };
+    }
+
+    // 3. Validate business identity binding
     if (entity.businessId !== creds.businessId) {
       return {
         authenticated: false,
@@ -215,7 +264,7 @@ export class EcosystemAuthenticator {
       };
     }
 
-    // 3. Timestamp freshness check
+    // 4. Timestamp freshness check
     const requestTime = new Date(creds.timestamp).getTime();
     const now = Date.now();
     if (isNaN(requestTime) || Math.abs(now - requestTime) > this.MAX_CLOCK_SKEW_MS) {
@@ -226,7 +275,7 @@ export class EcosystemAuthenticator {
       };
     }
 
-    // 4. Nonce replay check with distributed fail-closed handling
+    // 5. Nonce replay check with distributed fail-closed handling
     const store = customStore || this.replayStore;
     try {
       const health = await store.health();
@@ -254,7 +303,7 @@ export class EcosystemAuthenticator {
       };
     }
 
-    // 5. Signature verification
+    // 6. Signature verification
     if (creds.signature && rawBodyToVerify !== undefined) {
       const expectedSignature = this.createSignature(
         entity.secretKey,
@@ -271,6 +320,16 @@ export class EcosystemAuthenticator {
           authenticated: false,
           errorCode: 'INVALID_SIGNATURE',
           errorMessage: 'Cryptographic HMAC-SHA256 signature verification failed.',
+        };
+      }
+    } else if (creds.apiKey) {
+      const keyBuffer = Buffer.from(creds.apiKey);
+      const expectedBuffer = Buffer.from(entity.secretKey);
+      if (keyBuffer.length !== expectedBuffer.length || !timingSafeEqual(keyBuffer, expectedBuffer)) {
+        return {
+          authenticated: false,
+          errorCode: 'INVALID_API_KEY',
+          errorMessage: 'Invalid API key provided for ecosystem service.',
         };
       }
     }

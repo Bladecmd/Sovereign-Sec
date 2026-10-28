@@ -11,6 +11,7 @@ import {
   FleetEntityConnectionStatus,
   SocFleetEntityPosture,
 } from '../types/compliance.js';
+import { EcosystemAuthenticator } from '../integrations/auth/credentials.js';
 
 export interface PostureSynchronizerOptions {
   auditService?: AuditService;
@@ -53,7 +54,7 @@ export class PostureSynchronizer {
         entity: 'COMPLIANCE_LABS',
         displayName: 'Compliance Labs Regulatory Center',
         score: 100,
-        defenses: ['NIST_ZTA_CERTIFIED', 'SOC2_TYPE_II_AUDITED', 'ISO_27001_COMPLIANT', 'SBOM_ANALYSIS'],
+        defenses: ['NIST_ZTA_MAPPED', 'SOC2_TYPE_II_EVIDENCE', 'ISO_27001_MAPPED', 'SBOM_ANALYSIS'],
       },
       {
         entity: 'AUDIOBLUE',
@@ -169,24 +170,31 @@ export class PostureSynchronizer {
   }
 
   /**
-   * Returns SOC V2 Discrete Fleet Posture for the 5 authorized ecosystem entities
-   * Shows CONNECTED / DEGRADED / OFFLINE / UNKNOWN and real control/evidence counts (no fake percentages)
+   * Returns SOC V2 Discrete Fleet Posture for the authorized ecosystem entities.
+   * Reports genuine connectivity and configuration status; never falsely claims CONNECTED
+   * when secrets or live connectivity are unverified.
    */
   public getSocFleetPosture(): SocFleetEntityPosture[] {
     const now = new Date().toISOString();
+
+    const entityServiceMap: Record<string, string> = {
+      SOVEREIGN_OS: 'sovereign-os',
+      METRO_TASK_FORCE: 'metro-task-force',
+      COMPLIANCE_LABS: 'compliance-labs',
+      AUDIOBLUE: 'audioblue',
+      GRIDD_CORP: 'gridd-corp',
+    };
+
     const authorizedEntities: Array<{
       entity: EcosystemEntity;
       displayName: string;
-      status: FleetEntityConnectionStatus;
       controlCount: number;
       evidenceCount: number;
       activeDefenses: string[];
-      notes: string;
     }> = [
       {
         entity: 'SOVEREIGN_OS',
         displayName: 'Sovereign OS',
-        status: 'CONNECTED',
         controlCount: 6,
         evidenceCount: 6,
         activeDefenses: [
@@ -197,12 +205,10 @@ export class PostureSynchronizer {
           'AUDIT_PROVENANCE_LOGGING',
           'ABAC_DYNAMIC_GEOFENCING',
         ],
-        notes: 'SovereignSecurityClient connected. Zero direct tool execution enforced.',
       },
       {
         entity: 'METRO_TASK_FORCE',
         displayName: 'MTF',
-        status: 'CONNECTED',
         controlCount: 4,
         evidenceCount: 4,
         activeDefenses: [
@@ -211,12 +217,10 @@ export class PostureSynchronizer {
           'PRIVILEGED_ACCOUNT_MONITORING',
           'FIELD_LEVEL_PII_PROTECTION',
         ],
-        notes: 'MTF secure adapter active. Pure business analytics rejected from ingestion.',
       },
       {
         entity: 'COMPLIANCE_LABS',
         displayName: 'Compliance Labs',
-        status: 'CONNECTED',
         controlCount: 5,
         evidenceCount: 5,
         activeDefenses: [
@@ -226,12 +230,10 @@ export class PostureSynchronizer {
           'CRYPTOGRAPHIC_PROOF_GENERATION',
           'REGULATORY_AUDIT_EXCHANGE',
         ],
-        notes: 'Evidence mapping engine active. Internal controls mapped without fake certification.',
       },
       {
         entity: 'AUDIOBLUE',
         displayName: 'AudioBlue',
-        status: 'CONNECTED',
         controlCount: 4,
         evidenceCount: 4,
         activeDefenses: [
@@ -240,12 +242,10 @@ export class PostureSynchronizer {
           'CYCLONEDX_SBOM_GENERATION',
           'EMERGENCY_BYPASS_AUDIT_TRAIL',
         ],
-        notes: 'CI/CD security controls enforced. High-entropy secret blocker active.',
       },
       {
         entity: 'GRIDD_CORP',
         displayName: 'GriDD Corp',
-        status: 'CONNECTED',
         controlCount: 5,
         evidenceCount: 5,
         activeDefenses: [
@@ -255,23 +255,32 @@ export class PostureSynchronizer {
           'KMS_ENVELOPE_ENCRYPTION',
           'GROUP_POLICY_SYNCHRONIZATION',
         ],
-        notes: 'Group-level governance boundary connected. Multi-tenant policy isolation active.',
       },
     ];
 
     return authorizedEntities.map((item) => {
       const livePosture = this.entityPostures.get(item.entity);
+      const serviceId = entityServiceMap[item.entity];
+      const isConfigured = serviceId ? EcosystemAuthenticator.isEntityConfigured(serviceId) : false;
+
+      let status: FleetEntityConnectionStatus = 'UNKNOWN';
+      let operationalNotes = 'Ecosystem secret key unconfigured in host environment. Live connectivity inactive.';
+
+      if (isConfigured) {
+        status = livePosture && livePosture.findings.length > 0 ? 'DEGRADED' : 'CONNECTED';
+        operationalNotes = 'Adapter configured in ecosystem registry. Mutual authentication active.';
+      }
+
       return {
         entity: item.entity,
         displayName: item.displayName,
-        status: (livePosture && livePosture.findings.length > 0 ? 'DEGRADED' : item.status) as FleetEntityConnectionStatus,
+        status,
         controlCount: item.controlCount,
         evidenceCount: item.evidenceCount,
         activeDefenses: livePosture ? livePosture.activeDefenses : item.activeDefenses,
         lastSyncAt: livePosture ? livePosture.lastSyncAt : now,
-        operationalNotes: item.notes,
+        operationalNotes,
       };
     });
   }
 }
-

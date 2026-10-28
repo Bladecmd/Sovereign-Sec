@@ -232,7 +232,7 @@ describe('Local HTTP Security API Server & Webhooks', () => {
     assert.equal(res.status, 200);
     const report = (await res.json()) as { framework: string; certificationStatus: string; overallScore: number };
     assert.equal(report.framework, 'NIST_SP_800_207');
-    assert.equal(report.certificationStatus, 'CERTIFIED');
+    assert.equal(report.certificationStatus, 'INTERNAL_SELF_ASSESSMENT');
     assert.equal(report.overallScore, 100);
   });
 

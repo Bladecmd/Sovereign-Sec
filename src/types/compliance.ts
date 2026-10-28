@@ -25,7 +25,11 @@ export interface ComplianceControl {
   evaluatedAt: string;
 }
 
-export type CertificationStatus = 'CERTIFIED' | 'PROVISIONAL' | 'NON_COMPLIANT';
+export type CertificationStatus =
+  | 'INTERNAL_SELF_ASSESSMENT'
+  | 'NOT_CERTIFIED'
+  | 'PROVISIONAL'
+  | 'NON_COMPLIANT';
 
 export interface ComplianceCertificationReport {
   reportId: string;
@@ -38,6 +42,7 @@ export interface ComplianceCertificationReport {
   controls: ComplianceControl[];
   certificationStatus: CertificationStatus;
   signatureHash: string;
+  attestationNotice: string;
 }
 
 export type EcosystemEntity =
@@ -101,7 +106,13 @@ export interface SocComplianceEvidenceItem {
   isFormalCertification: false; // Explicitly declared: not a formal external certification
 }
 
-export type FleetEntityConnectionStatus = 'CONNECTED' | 'DEGRADED' | 'OFFLINE' | 'UNKNOWN';
+export type FleetEntityConnectionStatus =
+  | 'CONNECTED'
+  | 'DEGRADED'
+  | 'OFFLINE'
+  | 'UNKNOWN'
+  | 'UNCONFIGURED'
+  | 'MOCKED';
 
 export interface SocFleetEntityPosture {
   entity: EcosystemEntity;
@@ -113,4 +124,3 @@ export interface SocFleetEntityPosture {
   lastSyncAt: string;
   operationalNotes: string;
 }
-

@@ -23,6 +23,8 @@ dist/
 build/
 coverage/
 *.tsbuildinfo
+.scratch/
+.aider-desk/
 
 # Operating System
 .DS_Store

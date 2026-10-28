@@ -24,7 +24,7 @@ describe('Milestone V1.0: Integrated Sovereign Security Operations Platform', ()
       const report = compliance.certify('NIST_SP_800_207');
 
       assert.equal(report.framework, 'NIST_SP_800_207');
-      assert.equal(report.certificationStatus, 'CERTIFIED');
+      assert.equal(report.certificationStatus, 'INTERNAL_SELF_ASSESSMENT');
       assert.equal(report.overallScore, 100);
       assert.equal(report.totalControls, 5);
       assert.equal(report.compliantControls, 5);
@@ -33,14 +33,14 @@ describe('Milestone V1.0: Integrated Sovereign Security Operations Platform', ()
 
       // Verify audit record was created
       const records = audit.getRecords();
-      assert.ok(records.some((r) => r.what.includes('compliance.certified:NIST_SP_800_207')));
+      assert.ok(records.some((r) => r.what.includes('compliance.self_assessment:NIST_SP_800_207')));
     });
 
     it('certifies against SOC 2 Type II Trust Services Criteria', () => {
       const report = compliance.certify('SOC2_TYPE_II');
 
       assert.equal(report.framework, 'SOC2_TYPE_II');
-      assert.equal(report.certificationStatus, 'CERTIFIED');
+      assert.equal(report.certificationStatus, 'INTERNAL_SELF_ASSESSMENT');
       assert.equal(report.overallScore, 100);
       assert.ok(report.controls.some((c) => c.id === 'SOC2-CC6.6')); // AI prompt injection defense
       assert.ok(report.controls.some((c) => c.id === 'SOC2-CC6.7')); // Model Armor
@@ -50,7 +50,7 @@ describe('Milestone V1.0: Integrated Sovereign Security Operations Platform', ()
       const report = compliance.certify('ISO_IEC_27001_2022');
 
       assert.equal(report.framework, 'ISO_IEC_27001_2022');
-      assert.equal(report.certificationStatus, 'CERTIFIED');
+      assert.equal(report.certificationStatus, 'INTERNAL_SELF_ASSESSMENT');
       assert.equal(report.overallScore, 100);
       assert.ok(report.controls.some((c) => c.id === 'ISO-A.8.28')); // Pre-commit secret scanning
       assert.ok(report.controls.some((c) => c.id === 'ISO-A.8.30')); // SLSA Level 3
@@ -129,9 +129,9 @@ describe('Milestone V1.0: Integrated Sovereign Security Operations Platform', ()
       assert.equal(summary.components.POSTURE_SYNCHRONIZER, 'ACTIVE');
 
       // Check certifications
-      assert.equal(summary.complianceCertifications.NIST_SP_800_207, 'CERTIFIED');
-      assert.equal(summary.complianceCertifications.SOC2_TYPE_II, 'CERTIFIED');
-      assert.equal(summary.complianceCertifications.ISO_IEC_27001_2022, 'CERTIFIED');
+      assert.equal(summary.complianceCertifications.NIST_SP_800_207, 'INTERNAL_SELF_ASSESSMENT');
+      assert.equal(summary.complianceCertifications.SOC2_TYPE_II, 'NOT_CERTIFIED');
+      assert.equal(summary.complianceCertifications.ISO_IEC_27001_2022, 'NOT_CERTIFIED');
     });
 
     it('executes coordinated end-to-end defense via master facade', async () => {

@@ -7,16 +7,19 @@ import { createServer, Server } from 'node:http';
 import { StructuredLogger } from '../observability/logger.js';
 import { PersistentAuditLedger } from '../audit/persistent-storage.js';
 import { SovereignSecurityApiHandler } from './routes.js';
+import { ServerAuthOptions } from './auth.js';
 
 export interface ServerConfig {
   port?: number;
   host?: string;
   auditStoragePath?: string;
+  auth?: ServerAuthOptions;
 }
 
 export function startSovereignSecurityServer(config: ServerConfig = {}): Promise<{
   server: Server;
   port: number;
+  handler: SovereignSecurityApiHandler;
   stop: () => Promise<void>;
 }> {
   const port = typeof config.port === 'number' ? config.port : (Number(process.env.PORT) || 4000);
@@ -37,6 +40,7 @@ export function startSovereignSecurityServer(config: ServerConfig = {}): Promise
   const handler = new SovereignSecurityApiHandler({
     logger,
     persistentLedger,
+    auth: config.auth,
   });
 
   return new Promise((resolve, reject) => {
@@ -57,6 +61,7 @@ export function startSovereignSecurityServer(config: ServerConfig = {}): Promise
       resolve({
         server,
         port: actualPort,
+        handler,
         stop: () =>
           new Promise<void>((res, rej) => {
             server.close((err) => (err ? rej(err) : res()));

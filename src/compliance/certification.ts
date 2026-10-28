@@ -1,6 +1,10 @@
 /**
  * Sovereign Security — Milestone V1.0
  * Compliance Certification Engine
+ *
+ * Evaluates internal controls against cybersecurity frameworks.
+ * Emits strictly internal self-assessment statuses and explicitly disclaims
+ * accredited external certifications.
  */
 
 import { createHash } from 'node:crypto';
@@ -28,7 +32,7 @@ export class ComplianceCertificationEngine {
   }
 
   /**
-   * Certifies the system against a specified compliance framework
+   * Certifies the system against a specified compliance framework (Internal Self-Assessment)
    */
   public certify(frameworkId: ComplianceFrameworkId): ComplianceCertificationReport {
     const framework = COMPLIANCE_FRAMEWORKS[frameworkId];
@@ -59,13 +63,17 @@ export class ComplianceCertificationEngine {
 
     let certificationStatus: CertificationStatus = 'NON_COMPLIANT';
     if (overallScore === 100) {
-      certificationStatus = 'CERTIFIED';
+      certificationStatus = 'INTERNAL_SELF_ASSESSMENT';
     } else if (overallScore >= 80) {
       certificationStatus = 'PROVISIONAL';
+    } else {
+      certificationStatus = 'NON_COMPLIANT';
     }
 
     const reportId = `cert-${frameworkId.toLowerCase()}-${Date.now()}`;
     const signatureHash = this.computeReportSignature(reportId, frameworkId, overallScore, now);
+    const attestationNotice =
+      'INTERNAL ALGORITHMIC SELF-ASSESSMENT ONLY. This report does NOT constitute an independent accredited third-party SOC 2 Type II attestation, ISO/IEC 27001 certification, or formal governmental authorization.';
 
     const report: ComplianceCertificationReport = {
       reportId,
@@ -78,20 +86,22 @@ export class ComplianceCertificationEngine {
       controls: evaluatedControls,
       certificationStatus,
       signatureHash,
+      attestationNotice,
     };
 
     if (this.auditService) {
       this.auditService.append({
         who: 'compliance-certification-engine',
-        what: `compliance.certified:${frameworkId}`,
+        what: `compliance.self_assessment:${frameworkId}`,
         where: 'sovereign-compliance-service',
-        why: `Automated regulatory certification against ${framework.name}`,
+        why: `Automated regulatory self-assessment against ${framework.name}`,
         result: certificationStatus === 'NON_COMPLIANT' ? 'FAILURE' : 'SUCCESS',
         details: {
           reportId,
           overallScore,
           certificationStatus,
           signatureHash,
+          attestationNotice,
         },
       });
     }
@@ -281,4 +291,3 @@ export class ComplianceCertificationEngine {
     };
   }
 }
-
