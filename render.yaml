@@ -48,16 +48,47 @@ services:
       - key: REPLAY_PROTECTION_ENABLED
         value: "true"
 
+      # Zero-Trust Ingress & Dashboard Access Controls
+      - key: ENFORCE_INGRESS_AUTH
+        value: "true"
+
+      - key: PROTECT_DASHBOARD
+        value: "true"
+
+      - key: DISABLE_DASHBOARD
+        value: "false"
+
+      - key: AUDIT_MAX_MEMORY_RECORDS
+        value: "500"
+
+      - key: SOC_DASHBOARD_USER
+        value: "sovereign-operator"
+
+      - key: SOC_DASHBOARD_PASSWORD
+        generateValue: true
+
+      - key: SOVEREIGN_ADMIN_API_KEY
+        generateValue: true
+
+      - key: SOVEREIGN_OPERATOR_API_KEY
+        generateValue: true
+
+      - key: SOVEREIGN_AUDIT_API_KEY
+        generateValue: true
+
       # Ecosystem Service Authentication Keys (Set in Render Dashboard > Environment)
       # Do NOT commit actual secrets here. Place real keys in Render's Secret Manager.
-      - key: SOVEREIGN_OS_API_KEY
+      - key: SOVEREIGN_OS_SECRET_KEY
         generateValue: true
 
-      - key: MTF_GATEWAY_API_KEY
+      - key: MTF_TELEMETRY_SECRET_KEY
         generateValue: true
 
-      - key: VEGA_AGENT_SECRET
+      - key: COMPLIANCE_LABS_SECRET_KEY
         generateValue: true
 
-      - key: PROVENANCE_HMAC_SECRET
+      - key: AUDIOBLUE_BUILD_SECRET_KEY
+        generateValue: true
+
+      - key: GRIDD_CORP_SECRET_KEY
         generateValue: true
