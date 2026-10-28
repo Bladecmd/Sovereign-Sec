@@ -1,211 +1,185 @@
 # SOVEREIGN SECURITY — DEPLOYED CONTAINMENT VERIFICATION REPORT
 
-**Document ID:** `SEC-VERIFY-2026-10-28-01`  
-**Classification:** HIGH PRIORITY // APPLICATION SECURITY AUDIT & DEPLOYMENT DIRECTIVE  
-**Role:** Application Security Lead  
+**Document ID:** `SEC-VERIFY-2026-10-28-02`  
+**Classification:** HIGH PRIORITY // APPLICATION SECURITY AUDIT & RELEASE MANAGEMENT DIRECTIVE  
+**Role:** Senior Application Security Engineer & Release Manager  
 **Target Repository:** `Bladecmd/sovereign-security`  
 **Repository Working Directory:** `X:\Pr0\Sovereign Sec`  
-**Live Target Endpoint:** `https://sovereign-security.onrender.com` (Render Service ID: `srv-dar7hte0tbcc739aofrg`)  
+**Live Production URL:** `https://sovereign-security.onrender.com` (Render Service ID: `srv-dar7hte0tbcc739aofrg`)  
+**Verified Upstream Git Remote:** `https://github.com/Bladecmd/Sovereign-Sec.git`  
+**Current Branch:** `master`  
+**Committed & Pushed SHA:** `0ddfe5f` (`security: enforce ingress authentication, harden audit access, and correct compliance statuses`)  
 **Assessment Date:** 2026-10-28  
+**Final Release Status:** **`PUSHED_NOT_DEPLOYED`**  
 
 ---
 
-## 1. Executive Summary & Verdict
+## 1. Executive Summary & Final Release Status
 
-This deployed verification report establishes the definitive security posture of Sovereign Security by contrasting the **remediated codebase verified in staging** against the **actual live service deployed in production**.
+This report delivers the verified release status for Sovereign Security following urgent containment analysis, code review, comprehensive regression testing, and upstream GitHub push.
 
-### Verdict Summary
+### Release Status Matrix
 
-| Environment | Status | Verification Detail |
+| Checkpoint | Status | Evidence Summary |
 |---|---|---|
-| **Staging / Local Test Suite** | **`VERIFIED`** | **235/235 tests passing across 95 suites (100% PASS)**. Clean `tsc` compilation and production build. All 31 negative security, authorization, HMAC, anti-replay, and disaster recovery assertions confirmed. |
-| **Live Production Deployment** | **`NOT VERIFIED`** | **FAIL / UNRESOLVED EXPOSURE**. Direct network probes confirm that `https://sovereign-security.onrender.com` is actively running the pre-remediation commit (`4773716`), exposing unauthenticated API routes, public dashboard, and live audit ledger records to the public internet. |
+| **Staging / Local Test Suite** | **PASS** | **235/235 tests pass across 95 suites (0 failures)**. |
+| **Typecheck & Production Build** | **PASS** | `tsc --noEmit` exited code `0`. `npm run build` exited code `0`. `git diff --check` clean. |
+| **GitHub Upstream Push** | **PUSHED** | Commit `0ddfe5f` pushed cleanly to `origin/master` (`https://github.com/Bladecmd/Sovereign-Sec.git`). |
+| **Live Production Deployment** | **NOT DEPLOYED** | Direct empirical probes confirm `https://sovereign-security.onrender.com` has an uptime > 18 days and continues running pre-remediation commit `4773716`. |
+| **Live Production Exposure** | **UNRESOLVED / EXPOSED** | Live service continues serving `/`, `/dashboard`, `/metrics`, and `/api/v1/audit/ledger` without authentication. |
+| **Final Governance Status** | **`PUSHED_NOT_DEPLOYED`** | **Production is NOT secure until the platform operator applies containment/deployment controls.** |
 
 > [!CAUTION]
-> **CRITICAL DIRECTIVE ON PUBLIC ISOLATION:**  
-> **The live production service MUST REMAIN ISOLATED FROM PUBLIC TRAFFIC IMMEDIATELY.**  
-> It must either be placed into **Private Service** mode in the Render Dashboard or suspended until the platform operator stages the required environment credentials and redeploys the remediated commit.
+> **GOVERNANCE MANDATE:**  
+> Pushing code to GitHub does NOT remediate a running cloud deployment. The live Render production service remains exposed to public internet traffic until the platform operator provisions environment variables and triggers a deployment or isolates the service.
 
 ---
 
-## 2. Phase 1 — Deployed Exposure Findings (Live Production Evidence)
+## 2. Phase 1 & 2 — Live Production Exposure Findings
 
-### 2.1. Git Commit Baseline vs. Live Deployment
-- **Local Working Tree:** Remediated code is fully implemented and tested across [src/server/auth.ts](file:///X:/Pr0/Sovereign%20Sec/src/server/auth.ts), [src/server/routes.ts](file:///X:/Pr0/Sovereign%20Sec/src/server/routes.ts), [src/integrations/auth/credentials.ts](file:///X:/Pr0/Sovereign%20Sec/src/integrations/auth/credentials.ts), [src/audit/persistent-storage.ts](file:///X:/Pr0/Sovereign%20Sec/src/audit/persistent-storage.ts), and [src/compliance/certification.ts](file:///X:/Pr0/Sovereign%20Sec/src/compliance/certification.ts).
-- **Deployed Commit:** Render is running commit `4773716` from branch `origin/master`. As per security policy ("Do not deploy without explicit approval"), no code has been pushed to remote without authorization. Consequently, the live production environment does NOT yet have the fixes deployed.
+### 2.1. Safe Live Probe Telemetry (No Sensitive Data Extracted)
+Live, non-destructive HTTP requests were executed against `https://sovereign-security.onrender.com` to confirm exposure status without enumerating or logging sensitive audit payloads:
 
-### 2.2. Empirical Live Probe Telemetry (`https://sovereign-security.onrender.com`)
-
-Live non-intrusive HTTP probes were executed against the production deployment to verify actual public exposure:
-
-| Route | Live HTTP Status | Live Behavior & Exposure Observed | Remediated Expected Behavior |
+| Endpoint | HTTP Status | Production Exposure Assessment | Remediated Expected Behavior |
 |---|---|---|---|
-| `GET /health` | **HTTP 200** | Returns uptime (16s), memory telemetry, and version `0.2.0`. | **HTTP 200** (Public liveness probe) |
-| `GET /ready` | **HTTP 200** | Returns `ready: true`, checks policy, and audit ledger integrity. | **HTTP 200** (Public readiness probe) |
-| `GET /` | **HTTP 200** | **PUBLICLY EXPOSED.** Serves full SOC operations dashboard HTML without requiring login credentials. | **HTTP 401** (WWW-Authenticate: Basic challenge) |
-| `GET /dashboard` | **HTTP 200** | **PUBLICLY EXPOSED.** Serves full administrative dashboard HTML to anonymous web visitors. | **HTTP 401** (WWW-Authenticate: Basic challenge) |
-| `GET /metrics` | **HTTP 200** | **PUBLICLY EXPOSED.** Emits unauthenticated Prometheus metrics (`sovereign_policy_evaluations_total`). | **HTTP 401** (Requires API key with READ permission) |
-| `GET /api/v1/audit/ledger` | **HTTP 200** | **CRITICAL DATA EXPOSURE.** Returns historical cryptographic audit records (11 live events) over cleartext public internet. | **HTTP 401** `AUTHENTICATION_REQUIRED` |
-| `GET /api/v1/compliance/certify?framework=NIST_SP_800_207` | **HTTP 200** | **MISLEADING CLAIM.** Returns `"certificationStatus": "CERTIFIED"`. | **HTTP 401** (Auth required) / `"INTERNAL_SELF_ASSESSMENT"` |
-| `GET /api/v1/platform/summary` | **HTTP 200** | **MISLEADING CLAIM.** Claims NIST, SOC 2, and ISO 27001 are `"CERTIFIED"`. | **HTTP 401** / Returns `"NOT_CERTIFIED"` & `"INTERNAL_SELF_ASSESSMENT"` |
-| `POST /api/v1/policy/evaluate` | **HTTP 500** | Crashes with unhandled exception (`"Cannot read properties of undefined (reading 'environment')"`). | **HTTP 401** (Unauthenticated) / Safe fallback parsing |
+| `GET /health` | **HTTP 200 (OK)** | Public liveness probe operational (uptime: 1,634,504s / ~18.9 days). | **HTTP 200** (Designated public route) |
+| `GET /ready` | **HTTP 200 (OK)** | Readiness probe operational. | **HTTP 200** (Designated public route) |
+| `GET /` | **HTTP 200 (OK)** | **CRITICAL EXPOSURE.** Serves full SOC dashboard UI to anonymous requests without challenge. | **HTTP 401** (WWW-Authenticate: Basic challenge) |
+| `GET /dashboard` | **HTTP 200 (OK)** | **CRITICAL EXPOSURE.** Serves administrative dashboard UI without authentication. | **HTTP 401** (WWW-Authenticate: Basic challenge) |
+| `GET /metrics` | **HTTP 200 (OK)** | **TELEMETRY EXPOSURE.** Exposes operational Prometheus exposition metrics without credentials. | **HTTP 401** (Requires API key with READ permission) |
+| `GET /api/v1/audit/ledger` | **HTTP 200 (OK)** | **LEDGER EXPOSURE.** Returns live cryptographic ledger data without requiring tokens or keys. | **HTTP 401** `AUTHENTICATION_REQUIRED` |
+| `GET /api/v1/compliance/certify` | **HTTP 200 (OK)** | **MISLEADING CLAIMS.** Returns `CERTIFIED` status. | **HTTP 401** / Returns `INTERNAL_SELF_ASSESSMENT` |
 
-### 2.3. Secret & Credential Inspection
-Inspection of headers (`rndr-id`, `x-render-origin-server`, `x-security-version: 2.0.0-phase2c`) confirmed that Cloudflare and Render edge proxies did not leak internal tokens. However, the application-level data payload exposed live system operations and internal event IDs (e.g. `SECURITY-PERSISTENCE-8472`).
-
----
-
-## 3. Phase 2 — Authorisation & Ingress Security Verification (Staging Evidence)
-
-In staging/local runtime, the remediated [IngressAuthenticator](file:///X:/Pr0/Sovereign%20Sec/src/server/auth.ts) and route guards were verified using 31 dedicated security tests in [tests/security-remediation.test.ts](file:///X:/Pr0/Sovereign%20Sec/tests/security-remediation.test.ts).
-
-### 3.1. Privilege Boundaries & Role Enforcement
-- **Read-Only / Service Key Restrictions:**
-  - `POST /api/v1/soc/containment/release` with a read-only token returns **HTTP 403 `AUTHORIZATION_DENIED`**.
-  - `POST /api/v1/soc/agents/command` with a read-only token returns **HTTP 403 `AUTHORIZATION_DENIED`**.
-  - Read-only tokens retain read privileges for `/api/v1/telemetry/stats` and `/api/v1/audit/ledger` (**HTTP 200**).
-- **Operator vs. Administrator Restrictions:**
-  - Operator keys (holding `SERVICE` role with operator metadata) can triage alerts and sync baselines, but are strictly prohibited from releasing quarantine containment (**HTTP 403**). Containment release is restricted exclusively to authenticated subjects possessing the **`ADMIN`** role.
-
-### 3.2. Server-Side Identity Authority & Anti-Spoofing
-- **Client Body Injection Neutralized:**
-  - Client supplying `{ "role": "ADMIN", "callerId": "fake-admin" }` in the request body while authenticated with a read-only token is rejected with **HTTP 403 `AUTHORIZATION_DENIED`**.
-  - Client supplying `{ "role": "SOC_ADMIN" }` in the body with an operator token is rejected with **HTTP 403 `AUTHORIZATION_DENIED`**.
-  - Authorization binds strictly to `subject.role` established during ingress cryptographic authentication.
-
-### 3.3. Invalid, Expired & Replayed Credentials
-- **Invalid Bearer Token:** Returns **HTTP 401 `INVALID_CREDENTIALS`**.
-- **Invalid `X-API-Key`:** Returns **HTTP 401 `INVALID_CREDENTIALS`**.
-- **Expired Ecosystem Timestamp (> 5 min skew):** Returns **HTTP 401 `EXPIRED_TIMESTAMP`**.
-- **Replayed Nonce Over HTTP:** First request with cryptographic HMAC signature succeeds (**HTTP 201**). Second request reusing the same nonce within the sliding window is immediately rejected with **HTTP 401 `REPLAY_DETECTED`**.
-
-### 3.4. Cryptographic HMAC & Fail-Closed Secrets
-- **HMAC Signature Validation:** Valid SHA-256 HMAC signature computed over `timestamp:nonce:body` succeeds (**HTTP 201**). Tampered body payload with identical signature is rejected with **HTTP 401 `INVALID_SIGNATURE`**.
-- **Zero Fallback Secrets:** When an entity secret is absent from the host environment (e.g. `GRIDD_CORP_SECRET_KEY=""`), authentication attempts fail-closed with **HTTP 401 `INVALID_API_KEY`**. No default fallback credentials exist in the codebase.
-- **Basic Authentication:** Invalid username or password returns **HTTP 401 `INVALID_CREDENTIALS`**. Basic Auth cannot be used to bypass route-level role checks.
+### 2.2. Immediate Containment Action Required
+Because the live Render service cannot be altered without explicit operator authorization, the platform operator must execute the following containment action immediately:
+1. **Option A (Preferred):** Switch the Render Web Service `srv-dar7hte0tbcc739aofrg` to **Private Service** mode in Render Dashboard settings to terminate all public ingress.
+2. **Option B (Staged Deployment):** Configure the required production environment variables in the Render Dashboard and trigger a deployment of commit `0ddfe5f`.
 
 ---
 
-## 4. Phase 3 — Data Durability & Disaster Recovery Verification
+## 3. Phase 3 — Remediation Review & Local Test Results
 
-### 4.1. Tamper Detection & Fail-Closed Integrity
-- Synthetic records appended to [PersistentAuditLedger](file:///X:/Pr0/Sovereign%20Sec/src/audit/persistent-storage.ts) maintain unbroken SHA-256 hash continuity.
-- Simulated disk corruption (altering a single byte of payload or hash) was tested. Upon re-initialization, the ledger detects the mismatch and fails closed with:
+### 3.1. Verification of Security Invariants
+- **Fail-Closed API Ingress:** All `/api/v1/*` routes pass through [IngressAuthenticator](file:///X:/Pr0/Sovereign%20Sec/src/server/auth.ts), returning `HTTP 401 AUTHENTICATION_REQUIRED` or `INVALID_CREDENTIALS` on missing/invalid tokens.
+- **Protected Dashboard:** `/` and `/dashboard` enforce HTTP Basic Authentication (`WWW-Authenticate: Basic realm="Sovereign Security SOC Dashboard"`), with support for `DISABLE_DASHBOARD=true` (HTTP 404).
+- **Server-Side Identity Authority:** Operations such as `/api/v1/soc/containment/release` strictly inspect `subject.role` established during transport authentication; client-supplied `body.role` and `body.callerId` are disregarded.
+- **Cryptographic HMAC & Anti-Replay:** Valid SHA-256 HMAC over `timestamp:nonce:body` succeeds (201); replayed nonces are rejected (401 `REPLAY_DETECTED`); tampered bodies are rejected (401 `INVALID_SIGNATURE`).
+- **Fail-Closed Zero Fallback Secrets:** Expunged all hardcoded fallback keys in [src/integrations/auth/credentials.ts](file:///X:/Pr0/Sovereign%20Sec/src/integrations/auth/credentials.ts). When environment variables are absent, authentication fails closed with `INVALID_API_KEY`.
+- **Truthful Compliance Statuses:** Removed all unverified claims of accredited third-party certification. NIST SP 800-207 is reported as `INTERNAL_SELF_ASSESSMENT`; SOC 2 Type II and ISO/IEC 27001:2022 are reported as `NOT_CERTIFIED`.
+- **Audit Ledger Durability & Bounded Memory:** [PersistentAuditLedger](file:///X:/Pr0/Sovereign%20Sec/src/audit/persistent-storage.ts) streams logs in 64KB chunks on boot ($O(1)$ memory usage) and maintains a bounded sliding window (`maxMemoryRecords: 500`). `createBackupSnapshot()` produces verifiable point-in-time archives with `.meta.json` checksum manifests.
+
+### 3.2. Automated Test & Build Execution Evidence
+- **Complete Test Suite (`tests/run-all.ts`):**
   ```text
-  Data tamper detected: checksum mismatch / tampered hash at record audit-... (index 0).
+  ℹ tests 235
+  ℹ suites 95
+  ℹ pass 235
+  ℹ fail 0
+  ℹ cancelled 0
+  ℹ skipped 0
+  ℹ todo 0
+  ℹ duration_ms 32186.6802
   ```
-- Any subsequent attempt to append to the compromised ledger throws an unrecoverable exception:
-  `"Cannot append to compromised audit ledger"`.
-
-### 4.2. Disaster Recovery Snapshot & Cold Restoration
-- The [createBackupSnapshot()](file:///X:/Pr0/Sovereign%20Sec/src/audit/persistent-storage.ts#L306) method was tested in an isolated environment (`.scratch/dr-test/`):
-  1. Generated live ledger with 50 sequential cryptographic records.
-  2. Executed `createBackupSnapshot()`, producing both an atomic snapshot log file and an accompanying `.meta.json` metadata checksum.
-  3. Performed cold recovery by copying the snapshot into a completely new, disposable ledger instance.
-  4. Initialized the restored ledger: verified 100% hash-chain continuity across all 50 historical records.
-  5. Appended new record #51 to the restored ledger: verified seamless sequence progression and hash chain continuity.
-
-### 4.3. Bounded Memory Under Large Historical Logs
-- Tested loading an audit log containing 1,000 sequential records.
-- Configured sliding memory window: `maxMemoryRecords: 50`.
-- Verified that active heap allocation retained exactly 50 records in RAM while 100% of the 1,000 records were cryptographically verified via streaming 64KB chunk reads, guaranteeing $O(1)$ memory consumption on boot.
-
----
-
-## 5. Phase 4 — Claims & Configuration Audit
-
-### 5.1. Regulatory Attestation Integrity
-- All source code claims of external certification have been eradicated:
-  - NIST SP 800-207 Zero Trust Architecture is attested strictly as **`INTERNAL_SELF_ASSESSMENT`**.
-  - AICPA SOC 2 Type II is stated strictly as **`NOT_CERTIFIED`**.
-  - ISO/IEC 27001:2022 is stated strictly as **`NOT_CERTIFIED`**.
-- Compliance report outputs now include a mandatory legal disclaimer notice:
-  > *"INTERNAL ALGORITHMIC SELF-ASSESSMENT ONLY. This report does NOT constitute an independent accredited third-party SOC 2 Type II attestation, ISO/IEC 27001 certification, or formal governmental authorization."*
-
-### 5.2. Environment Variable Configuration Audit
-All variables consumed in code were verified against [`.env.example`](file:///X:/Pr0/Sovereign%20Sec/.env.example):
-- `ENFORCE_INGRESS_AUTH`: Controls mandatory header token checking (defaults to `true` in production).
-- `PROTECT_DASHBOARD`: Controls HTTP Basic Authentication on `/` and `/dashboard`.
-- `DISABLE_DASHBOARD`: Completely disables UI routes (returning 404).
-- `SOVEREIGN_ADMIN_API_KEY`: Root administrative key.
-- `SOVEREIGN_OPERATOR_API_KEY`: Operations key.
-- `SOVEREIGN_AUDIT_API_KEY`: Read-only audit scraper key.
-- `SOC_DASHBOARD_USER` & `SOC_DASHBOARD_PASSWORD`: Basic Auth dashboard credentials.
-- `SOVEREIGN_OS_SECRET_KEY`, `MTF_TELEMETRY_SECRET_KEY`, `COMPLIANCE_LABS_SECRET_KEY`, `AUDIOBLUE_BUILD_SECRET_KEY`, `GRIDD_CORP_SECRET_KEY`: Pre-shared HMAC keys.
-- `AUDIT_STORAGE_PATH`: Persistent disk mount path (`/data/audit.log`).
-- `AUDIT_MAX_MEMORY_RECORDS`: In-memory window boundary (`500`).
+- **Dedicated Security Suite (`tests/security-remediation.test.ts`):**
+  ```text
+  ℹ tests 31
+  ℹ suites 13
+  ℹ pass 31
+  ℹ fail 0
+  ```
+- **TypeScript Typecheck (`npm run typecheck`):**
+  ```text
+  > sovereign-security@1.0.0 typecheck
+  > tsc --noEmit
+  (Exited with code 0)
+  ```
+- **Production Asset Build (`npm run build`):**
+  ```text
+  > sovereign-security@1.0.0 build
+  > tsc && node scripts/copy-assets.js
+  [build] Copied dashboard.html -> dist/dashboard/dashboard.html
+  [build] Copied favicon.svg -> dist/dashboard/favicon.svg
+  (Exited with code 0)
+  ```
+- **Git Diff Hygiene (`git diff --check`):** Clean, 0 whitespace warnings across all staged code files.
 
 ---
 
-## 6. Route-by-Route Verification Matrix
+## 4. Phase 4 — GitHub Commit and Push Evidence
 
-| Route | Method | Ingress Auth Scheme | Required Role / Clearance | Staging Status | Live Production Status |
-|---|---|---|---|---|---|
-| `/health` | `GET` | Public | None | **VERIFIED** (200 OK) | **VERIFIED** (200 OK) |
-| `/ready` | `GET` | Public | None | **VERIFIED** (200 OK) | **VERIFIED** (200 OK) |
-| `/` | `GET` | Basic Auth / Bearer | Dashboard Credentials | **VERIFIED** (401 Basic challenge) | **FAIL** (200 Exposed) |
-| `/dashboard` | `GET` | Basic Auth / Bearer | Dashboard Credentials | **VERIFIED** (401 Basic challenge) | **FAIL** (200 Exposed) |
-| `/metrics` | `GET` | Bearer / API Key | `READ` permission | **VERIFIED** (401 Rejection) | **FAIL** (200 Exposed) |
-| `/api/v1/events` | `POST` | Bearer / API Key / HMAC | `WRITE` permission | **VERIFIED** (401 Rejection / 201 Auth) | **FAIL** (Unauthenticated) |
-| `/api/v1/policy/evaluate` | `POST` | Bearer / API Key | Authenticated subject | **VERIFIED** (401 Rejection / 200 Auth) | **FAIL** (500 Uncaught Exception) |
-| `/api/v1/decisions/evaluate` | `POST` | Bearer / API Key | `WRITE` permission | **VERIFIED** (401 Rejection / 200 Auth) | **FAIL** (Unauthenticated) |
-| `/api/v1/soc/overview` | `GET` | Bearer / API Key / Basic | `READ` permission | **VERIFIED** (401 Rejection / 200 Auth) | **FAIL** (200 Exposed) |
-| `/api/v1/soc/fleet-posture` | `GET` | Bearer / API Key / Basic | `READ` permission | **VERIFIED** (401 Rejection / 200 Auth) | **FAIL** (200 Exposed) |
-| `/api/v1/soc/system-health` | `GET` | Bearer / API Key / Basic | `READ` permission | **VERIFIED** (401 Rejection / 200 Auth) | **FAIL** (200 Exposed) |
-| `/api/v1/soc/containment/release` | `POST` | Bearer / API Key | **Strictly `ADMIN` role** | **VERIFIED** (401 / 403 / 200) | **FAIL** (Body role spoofing) |
-| `/api/v1/soc/agents/command` | `POST` | Bearer / API Key | `OPERATOR` or `ADMIN` role | **VERIFIED** (401 / 403 / 200) | **FAIL** (Body role spoofing) |
-| `/api/v1/audit/ledger` | `GET` | Bearer / API Key | `READ` permission / `AUDIT` role | **VERIFIED** (401 Rejection / 200 Auth) | **FAIL** (200 Exposed) |
-| `/api/v1/audit/verify` | `GET` | Bearer / API Key | `READ` permission | **VERIFIED** (401 Rejection / 200 Auth) | **FAIL** (200 Exposed) |
-| `/api/v1/compliance/certify` | `GET` | Bearer / API Key | `READ` permission | **VERIFIED** (401 Rejection / 200 Auth) | **FAIL** (Claims `CERTIFIED`) |
-| `/api/v1/platform/summary` | `GET` | Bearer / API Key | `READ` permission | **VERIFIED** (401 Rejection / 200 Auth) | **FAIL** (Claims `CERTIFIED`) |
+The security remediation was committed and pushed to the verified remote repository:
+
+- **Remote URL:** `https://github.com/Bladecmd/Sovereign-Sec.git`
+- **Target Branch:** `master`
+- **Commit SHA:** `0ddfe5f`
+- **Commit Message:** `security: enforce ingress authentication, harden audit access, and correct compliance statuses`
+- **Push Output:**
+  ```text
+  To https://github.com/Bladecmd/Sovereign-Sec.git
+     4773716..0ddfe5f  master -> master
+  ```
+- **Integrity Guarantee:** No secrets, `.env` files, credentials, or audit logs were committed or pushed. The repository's [`.gitignore`](file:///X:/Pr0/Sovereign%20Sec/.gitignore) strictly excludes `.env`, `*.key`, `*.pem`, `/secrets/`, and `.scratch/`.
 
 ---
 
-## 7. Remaining Vulnerabilities & Risk Assessment
+## 5. Phase 5 — Deployment Separation & Operator Runbook
 
-| # | Vulnerability / Operational Risk | Severity | Environment Impacted | Remediation Path |
+Deployment remains an independent, deliberate operational action. The live Render container has NOT been modified by this release push.
+
+### 5.1. Operator Deployment Runbook
+
+#### Step 1: Provision Environment Variables in Render Dashboard
+Before deploying commit `0ddfe5f`, navigate to **Render Dashboard** > **sovereign-security (`srv-dar7hte0tbcc739aofrg`)** > **Environment** and populate:
+```bash
+ENFORCE_INGRESS_AUTH=true
+PROTECT_DASHBOARD=true
+DISABLE_DASHBOARD=false
+SOVEREIGN_ADMIN_API_KEY=<securely-generated-64-character-token>
+SOVEREIGN_OPERATOR_API_KEY=<securely-generated-64-character-token>
+SOVEREIGN_AUDIT_API_KEY=<securely-generated-64-character-token>
+SOC_DASHBOARD_USER=<chosen-operator-username>
+SOC_DASHBOARD_PASSWORD=<chosen-strong-password>
+SOVEREIGN_OS_SECRET_KEY=<pre-shared-hmac-key>
+MTF_TELEMETRY_SECRET_KEY=<pre-shared-hmac-key>
+COMPLIANCE_LABS_SECRET_KEY=<pre-shared-hmac-key>
+AUDIOBLUE_BUILD_SECRET_KEY=<pre-shared-hmac-key>
+GRIDD_CORP_SECRET_KEY=<pre-shared-hmac-key>
+AUDIT_STORAGE_PATH=/data/audit.log
+AUDIT_MAX_MEMORY_RECORDS=500
+```
+
+#### Step 2: Verify Persistent Disk Mount
+Under **Disks**, verify that a persistent disk is attached and mounted at:
+```text
+Mount Path: /data
+```
+
+#### Step 3: Trigger Manual Deploy
+In the Render Dashboard:
+1. Click **Manual Deploy** > **Deploy latest commit** (`0ddfe5f`).
+2. Monitor build logs to ensure `npm run build` completes and the service boots cleanly.
+
+#### Step 4: Post-Deployment Smoke Test
+Verify the deployment has taken effect by re-running minimal probes:
+- `GET /health` -> `HTTP 200`
+- `GET /` -> `HTTP 401` with `WWW-Authenticate: Basic`
+- `GET /dashboard` -> `HTTP 401` with `WWW-Authenticate: Basic`
+- `GET /api/v1/audit/ledger` -> `HTTP 401` with `AUTHENTICATION_REQUIRED`
+- `GET /api/v1/compliance/certify` -> `HTTP 401` with `AUTHENTICATION_REQUIRED`
+
+---
+
+## 6. Remaining Risks & Next Actions
+
+| # | Residual Operational Risk | Severity | Action Required | Owner |
 |---|---|---|---|---|
-| **R-01** | **Undeployed Security Patch in Production** | **CRITICAL** | Production (`sovereign-security.onrender.com`) | Isolate service from public traffic immediately. Deploy the remediated working tree commit. |
-| **R-02** | **Unauthenticated Public Audit Ledger** | **HIGH** | Production | Cease public routing; ensure `ENFORCE_INGRESS_AUTH=true` is set in Render environment. |
-| **R-03** | **Unprotected Dashboard Route** | **HIGH** | Production | Configure `PROTECT_DASHBOARD=true` and `SOC_DASHBOARD_USER`/`PASSWORD` in Render. |
-| **R-04** | **Unattached Render Persistent Disk** | **MEDIUM** | Production | Attach a Render persistent disk mounted at `/data` to prevent audit ledger loss across container restarts. |
+| **1** | Live production deployment remains on commit `4773716`. | **CRITICAL** | Isolate service from public traffic or deploy commit `0ddfe5f`. | Platform Operator |
+| **2** | Production service may boot without persistent disk if not attached in Render. | **HIGH** | Confirm disk attachment at `/data` to preserve audit records across restarts. | Infrastructure Lead |
+| **3** | Unconfigured ecosystem secrets will cause integration endpoints to fail-closed (`INVALID_API_KEY`). | **MEDIUM** | Ensure pre-shared HMAC keys are coordinated across sibling suites. | Security Lead |
 
 ---
 
-## 8. Containment Actions & Operational Playbook
+## 7. Sign-off & Final Status
 
-To satisfy the exit criterion and ensure production containment:
-
-### Step 1: Immediate Network Isolation (Operator Action)
-In the Render Management Dashboard for service `srv-dar7hte0tbcc739aofrg`:
-1. Navigate to **Settings** > **Service Details**.
-2. Change service type or enable **Private Network** access to cut off public internet ingestion.
-3. If public access is temporarily necessary, navigate to **Environment** and add:
-   ```bash
-   ENFORCE_INGRESS_AUTH=true
-   PROTECT_DASHBOARD=true
-   SOVEREIGN_ADMIN_API_KEY=<generate-secure-random-64-char-token>
-   SOVEREIGN_OPERATOR_API_KEY=<generate-secure-random-64-char-token>
-   SOVEREIGN_AUDIT_API_KEY=<generate-secure-random-64-char-token>
-   SOC_DASHBOARD_USER=<choose-operator-username>
-   SOC_DASHBOARD_PASSWORD=<choose-strong-password>
-   ```
-
-### Step 2: Deploy Remediated Codebase
-1. Commit the staged working tree changes.
-2. Push to branch `origin/master`.
-3. Trigger a deployment on Render and verify build output.
-
-### Step 3: Post-Deployment Smoke Verification
-Once deployed, re-run Phase 1 probes against `https://sovereign-security.onrender.com`:
-- Confirm `GET /` and `GET /dashboard` return **HTTP 401 Unauthorized** with `WWW-Authenticate: Basic`.
-- Confirm `GET /api/v1/audit/ledger` returns **HTTP 401 Unauthorized**.
-- Confirm `GET /health` and `GET /ready` remain the **only** unauthenticated routes returning **HTTP 200**.
-
----
-
-## 9. Sign-off
-
-The application security remediation code is verified, complete, and robust in the repository. However, because the production infrastructure is running the prior unauthenticated build, the production status is explicitly designated as **`NOT VERIFIED`** pending authorized deployment and containment.
-
-**Lead Assessment:** Ready for production deployment upon platform operator credential provisioning.
+**Final Release Status:** **`PUSHED_NOT_DEPLOYED`**  
+The remediation code has been fully validated in staging and successfully pushed to GitHub branch `master` at commit `0ddfe5f`. The live production service remains vulnerable until deployed by the operator with appropriate environment configuration.
