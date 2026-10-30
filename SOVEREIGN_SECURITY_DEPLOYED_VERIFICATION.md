@@ -1,6 +1,6 @@
 # SOVEREIGN SECURITY — DEPLOYED CONTAINMENT VERIFICATION REPORT
 
-**Document ID:** `SEC-VERIFY-2026-10-30-04`
+**Document ID:** `SEC-VERIFY-2026-10-30-05`
 **Classification:** HIGH PRIORITY // APPLICATION SECURITY INCIDENT CLOSURE & PRODUCTION SIGN-OFF
 **Role:** Senior Application Security Engineer, Incident Response Analyst & Release Manager
 **Target Repository:** `Bladecmd/sovereign-security`
@@ -8,18 +8,31 @@
 **Live Production URL:** `https://sovereign-security.onrender.com` (Render Service ID: `srv-dar7hte0tbcc739aofrg`)
 **Verified Upstream Git Remote:** `https://github.com/Bladecmd/Sovereign-Sec.git`
 **Current Branch:** `master`
-**Deployed & Verified Commit SHA:** `cd0870f` (`fix(infra): align render blueprint environment variables and record root cause in verification report`)
-**Active Deploy ID:** `dep-dbi78udg1s2s73e6sdo0` (Deployed: `2026-10-30T10:43:11Z`, Status: `live`)
-**Post-Deploy Verification Timestamp:** `2026-10-30T10:46:58Z`
-**Final Release Status:** **`DEPLOYED_AND_VERIFIED`**
+**Deployed & Verified Commit SHA:** `8c26e9a` (incorporating `cd0870f`, `23b4339`, `0ddfe5f`)
+**Active Deploy ID:** `dep-dbi7cqh42hec73fb1feg` (Deployed: `2026-10-30T10:51:33Z`, Status: `live`)
+**Prior Deploy ID:** `dep-dbi78udg1s2s73e6sdo0` (Deployed: `2026-10-30T10:43:11Z`, Status: `deactivated`)
+**Live Verification Timestamp:** `2026-10-30T10:59:33Z`
+**Overall Release Status:** **`LIVE_SECURITY_VERIFIED`**
 
 ---
 
-## 1. Executive Summary & Evidence Classification
+## 1. Release Lifecycle & Governance Status Matrix
 
-This document provides the definitive verification report and incident closure sign-off for Sovereign Security following the successful production build, deployment, and live security verification on Render.
+To ensure full transparency across every stage of the release lifecycle, the current standing across each required state is formally documented below:
 
-### 1.1. Evidence Classification Taxonomy
+| Lifecycle Phase | Status Designation | Standing | Evidence Summary |
+|---|---|---|---|
+| **Phase 1: Historical Exposure** | **`EXPOSURE_CONFIRMED`** | **HISTORICAL (RESOLVED)** | Empirical probes at `2026-10-28T16:38:20Z` confirmed legacy build `4773716` exposed `/`, `/dashboard`, `/metrics`, and `/api/v1/audit/ledger` unauthenticated. |
+| **Phase 2: Ingress Containment** | **`CONTAINMENT_APPLIED`** | **ACTIVE / ENFORCED** | Zero-trust authentication middleware active on all ingress routes. Anonymous access to sensitive endpoints is blocked (`HTTP 401 Unauthorized`). |
+| **Phase 3: Local Quality Invariants** | **`LOCAL_VERIFIED`** | **PASS / VERIFIED** | `npm test`: **235/235 pass** across 95 suites (0 fail); `npm run typecheck`: code 0; `npm run build`: code 0; `git diff --check`: code 0. |
+| **Phase 4: Remote Synchronization** | **`PUSHED`** | **CONFIRMED** | Local `HEAD` (`8c26e9a`) matches upstream `origin/master` at `https://github.com/Bladecmd/Sovereign-Sec.git`. |
+| **Phase 5: Cloud Deployment** | **`DEPLOYED`** | **CONFIRMED LIVE** | Render Deploy `dep-dbi7cqh42hec73fb1feg` finished `2026-10-30T10:51:33Z` (`status: live`). Persistent disk attached at `/data`. |
+| **Phase 6: Live Production Defense** | **`LIVE_SECURITY_VERIFIED`** | **VERIFIED OPERATIONAL** | Empirical live probes at `2026-10-30T10:59:33Z` confirm all 6 sensitive routes return `HTTP 401`, while `/health` returns `HTTP 200`. |
+
+---
+
+## 2. Phase 1 — Evidence Classification & Verification Taxonomy
+
 All findings in this report are categorized using the following explicit evidence criteria:
 - **`[VERIFIED]`**: Directly tested or inspected in this session.
 - **`[REPORTED]`**: Found in documentation, prior reports, or platform logs, but not directly testable without elevated infrastructure access.
@@ -27,26 +40,14 @@ All findings in this report are categorized using the following explicit evidenc
 - **`[BLOCKED]`**: Could not be directly tested or altered due to permissions, sandbox boundaries, or lack of operator authorization.
 - **`[NOT VERIFIED]`**: Explicitly unconfirmed or untestable from the current perimeter.
 
-### 1.2. Verification Status Matrix
-
-| Checkpoint | Status | Classification | Evidence Summary |
-|---|---|---|---|
-| **Staging Test Suite** | **PASS** | `[VERIFIED]` | **235/235 tests pass across 95 suites (0 failures)**. |
-| **Typecheck & Production Build** | **PASS** | `[VERIFIED]` | `tsc --noEmit` exited `0`; `npm run build` exited `0`; `git diff --check` clean. |
-| **Remediation Implementation** | **COMPLETE** | `[VERIFIED]` | Zero-trust auth middleware, Basic Auth dashboard challenge, server-side role authority, zero-fallback secrets, honest compliance, bounded audit ledger. |
-| **GitHub Remote Synchronization** | **IN SYNC** | `[VERIFIED]` | Local `HEAD` (`cd0870f`) matches upstream `origin/master` (`https://github.com/Bladecmd/Sovereign-Sec.git`). |
-| **Live Production Deployment** | **LIVE / PASS** | `[VERIFIED]` | Render Deploy `dep-dbi78udg1s2s73e6sdo0` completed successfully (`status: live`). Fresh container running commit `cd0870f`. |
-| **Live Ingress Exposure** | **CONTAINED & SECURED** | `[VERIFIED]` | Direct empirical probes confirm `/`, `/dashboard`, `/metrics`, `/api/v1/audit/ledger`, and `/api/v1/compliance/certify` all strictly enforce authentication (`HTTP 401`). Public exposure is fully eliminated. |
-| **Persistent Audit Disk** | **ATTACHED & MOUNTED** | `[VERIFIED]` | Render persistent disk `dsk-db4blurl550s73b87cmg` (`sovereign-audit-ledger`, 1 GB) confirmed attached and mounted at `/data`. |
-| **Final Governance Status** | **PRODUCTION READY** | `[VERIFIED]` | **`DEPLOYED_AND_VERIFIED`** |
-
 ---
 
-## 2. Phase A — Repository & Version Control Truth
+## 3. Phase 2 — Repository & Version Control Truth
 
 - **`[VERIFIED]` Git Working Tree:** Confirmed clean on branch `master`. Untracked files limited to pre-existing non-code configuration (`.cursor/rules/ecosystem_map.mdc`).
 - **`[VERIFIED]` Commit Lineage:**
-  - `cd0870f` (`fix(infra): align render blueprint environment variables and record root cause in verification report`) — Current HEAD & deployed live container.
+  - `8c26e9a` (`docs: finalize deployed containment verification report (DEPLOYED_AND_VERIFIED)`) — Current HEAD & active live deployment.
+  - `cd0870f` (`fix(infra): align render blueprint environment variables and record root cause in verification report`) — Initial successful container build.
   - `23b4339` (`docs: finalize deployed containment verification report (PUSHED_NOT_DEPLOYED)`) — Verification baseline.
   - `0ddfe5f` (`security: enforce ingress authentication, harden audit access, and correct compliance statuses`) — Core security remediation.
 - **`[VERIFIED]` Upstream Sync:** Read-only fetch against `origin/master` confirmed that local `HEAD` is strictly up to date with `https://github.com/Bladecmd/Sovereign-Sec.git`.
@@ -54,43 +55,45 @@ All findings in this report are categorized using the following explicit evidenc
 
 ---
 
-## 3. Phase B — Deployment Execution & Build Verification
+## 4. Phase 3 — Deployment Execution & Build Verification
 
-- **`[VERIFIED]` Deployment Trigger:** Deployment `dep-dbi78udg1s2s73e6sdo0` triggered via Render API with cleared build cache on commit `cd0870f`.
-- **`[VERIFIED]` Git Clone & Auth Resolution:** Render build worker successfully authenticated to GitHub, cloned `https://github.com/Bladecmd/Sovereign-Sec`, and checked out commit `cd0870f`.
+- **`[VERIFIED]` Deployment History:**
+  - `dep-dbi78udg1s2s73e6sdo0` (commit `cd0870f`): Triggered via API after GitHub permissions resolved; transitioned to `live` at `2026-10-30T10:43:11Z`.
+  - `dep-dbi7cqh42hec73fb1feg` (commit `8c26e9a`): Triggered via `new_commit` auto-deploy; transitioned to `live` at `2026-10-30T10:51:33Z`.
 - **`[VERIFIED]` Container Build Telemetry:**
-  - Base image: `node:22-alpine`
-  - Multi-stage build executed `npm ci --ignore-scripts`, compiled TypeScript to `dist/`, and pruned dev dependencies.
-  - Hardened runtime image: Installed `dumb-init`, non-root user `sovereign` (UID 10001), `/data` permissions `700`.
-  - Service booted and bound to `0.0.0.0:4000`:
+  - Base image: `node:22-alpine` (multi-stage build).
+  - Production container runs as unprivileged user `sovereign` (UID 10001) with `dumb-init` (PID 1).
+  - Storage directory `/data` configured with mode `700` and persistent disk attached.
+  - Container log confirmation:
     ```json
     {"timestamp":"2026-10-30T10:43:04.574Z","service":"sovereign-security-server","level":"info","requestId":"server-init","operation":"start","result":"SUCCESS","correlationId":"server-boot","metadata":{"port":4000,"host":"0.0.0.0","environment":"production"}}
     ```
-  - Deployment status transitioned to **`status: "live"`** at `2026-10-30T10:43:11Z`.
 
 ---
 
-## 4. Phase C — Safe Live Verification Probes (Post-Deployment Telemetry)
+## 5. Phase 4 — Safe Live Verification Probes (Post-Deployment Telemetry)
 
-Probes were conducted against `https://sovereign-security.onrender.com` on `2026-10-30T10:46:58Z`. All requests were safe, non-invasive `GET` probes. All previously vulnerable endpoints now strictly enforce authentication:
+Probes were conducted against `https://sovereign-security.onrender.com` on `2026-10-30T10:59:33Z`. All requests were safe, non-invasive `GET` and unauthenticated `POST` probes. No sensitive payloads were harvested or logged:
 
-| Target Route | HTTP Status | Evidence Classification | Production Reality & Security Assessment | Remediated Invariant Confirmed |
-|---|---|---|---|---|
-| `GET /health` | **200 OK** | `[VERIFIED]` | Returns status UP (`uptimeSeconds: 71`). Proves new container is healthy, live, and routing traffic. | **HTTP 200 OK** (Intentionally public liveness probe) |
-| `GET /ready` | **200 OK** | `[VERIFIED]` | Returns status READY. Proves readiness check passes. | **HTTP 200 OK** (Intentionally public readiness probe) |
-| `GET /` | **401 Unauthorized** | `[VERIFIED]` | Returns `WWW-Authenticate: Basic realm="Sovereign Security SOC Dashboard"`. Anonymous access blocked. | **HTTP 401** (Zero-trust challenge enforced) |
-| `GET /dashboard` | **401 Unauthorized** | `[VERIFIED]` | Returns `WWW-Authenticate: Basic realm="Sovereign Security SOC Dashboard"`. Anonymous access blocked. | **HTTP 401** (Zero-trust challenge enforced) |
-| `GET /metrics` | **401 Unauthorized** | `[VERIFIED]` | Returns `{"error": "AUTHENTICATION_REQUIRED"}`. Prometheus telemetry protected. | **HTTP 401** (Zero-trust challenge enforced) |
-| `GET /api/v1/audit/ledger` | **401 Unauthorized** | `[VERIFIED]` | Returns `{"error": "AUTHENTICATION_REQUIRED"}`. Live audit records protected from public access. | **HTTP 401** (Zero-trust challenge enforced) |
-| `GET /api/v1/compliance/certify` | **401 Unauthorized** | `[VERIFIED]` | Returns `{"error": "AUTHENTICATION_REQUIRED"}`. Unauthenticated compliance queries blocked. | **HTTP 401** (Zero-trust challenge enforced) |
+| Target Route | HTTP Method | HTTP Status | Evidence Classification | Production Reality & Security Assessment | Remediated Invariant Confirmed |
+|---|---|---|---|---|---|
+| `/health` | `GET` | **200 OK** | `[VERIFIED]` | Uptime: `415s`, status: `UP`, version: `0.2.0`. Service is healthy and routing. | Public liveness probe operational |
+| `/ready` | `GET` | **200 OK** | `[VERIFIED]` | Status: `READY`. Service ready for traffic. | Public readiness probe operational |
+| `/` | `GET` | **401 Unauthorized** | `[VERIFIED]` | Header: `WWW-Authenticate: Basic realm="Sovereign Security SOC Dashboard"`. | Unauthenticated root dashboard blocked |
+| `/dashboard` | `GET` | **401 Unauthorized** | `[VERIFIED]` | Header: `WWW-Authenticate: Basic realm="Sovereign Security SOC Dashboard"`. | Unauthenticated SOC dashboard blocked |
+| `/metrics` | `GET` | **401 Unauthorized** | `[VERIFIED]` | Payload: `{"error": "AUTHENTICATION_REQUIRED"}`. | Prometheus runtime telemetry protected |
+| `/api/v1/audit/ledger` | `GET` | **401 Unauthorized** | `[VERIFIED]` | Payload: `{"error": "AUTHENTICATION_REQUIRED"}`. | Cryptographic audit records protected |
+| `/api/v1/compliance/certify` | `GET` | **401 Unauthorized** | `[VERIFIED]` | Payload: `{"error": "AUTHENTICATION_REQUIRED"}`. | Misleading certification exposure eliminated |
+| `/api/v1/policy/evaluate` | `GET` | **401 Unauthorized** | `[VERIFIED]` | Payload: `{"error": "AUTHENTICATION_REQUIRED"}`. | Evaluation engine protected |
+| `/api/v1/policy/evaluate` | `POST` | **401 Unauthorized** | `[VERIFIED]` | Payload: `{"error": "AUTHENTICATION_REQUIRED"}`. | Evaluation execution protected |
 
 ---
 
-## 5. Phase D — Local Security Verification & Remediation Invariants
+## 6. Phase 5 — Local Security Verification & Remediation Invariants
 
 All security invariants were subjected to rigorous regression tests locally:
 
-### 5.1. Verified Architectural Controls
+### 6.1. Verified Architectural Controls
 1. **Universal API Ingress Authenticator (`src/server/auth.ts`):**
    - Missing headers -> `HTTP 401 AUTHENTICATION_REQUIRED`.
    - Invalid token -> `HTTP 401 INVALID_CREDENTIALS`.
@@ -118,39 +121,49 @@ All security invariants were subjected to rigorous regression tests locally:
    - Point-in-time backup snapshot generates verifiable archive with `.meta.json` checksum manifest.
    - Cold restore restores and verifies ledger integrity from snapshot.
 
-### 5.2. Test Execution Evidence
+### 6.2. Test Execution Evidence
 - **Full Test Suite (`npm test` / `tests/run-all.ts`):**
   - **Suites:** 95 passed, 95 total
   - **Tests:** 235 passed, 0 failed, 0 skipped
-  - **Duration:** 26.38s
-- **Dedicated Security Remediation Suite (`tests/security-remediation.test.ts`):**
+  - **Duration:** 22.29s (Exit code 0)
+- **Dedicated Security Remediation Suite (`npx tsx tests/security-remediation.test.ts`):**
   - **Suites:** 13 passed, 13 total
-  - **Tests:** 31 passed, 0 failed
+  - **Tests:** 31 passed, 0 failed (Exit code 0)
 - **TypeScript Static Verification (`npm run typecheck`):**
   - `tsc --noEmit` exited `0` with zero diagnostic errors.
 - **Production Asset Build (`npm run build`):**
-  - Compiles TypeScript to `dist/` and copies dashboard assets cleanly.
+  - Compiles TypeScript to `dist/` and copies dashboard assets cleanly (Exit code 0).
 - **Git Diff Hygiene (`git diff --check`):**
-  - Zero whitespace errors or corrupted patch markers.
+  - Zero whitespace errors or corrupted patch markers (Exit code 0).
 
 ---
 
-## 6. Phase E — Render Production Infrastructure Verification
+## 7. Phase 6 — Infrastructure Configuration & Dependency Analysis
 
-- **`[VERIFIED]` Service Name:** `sovereign-security`
-- **`[VERIFIED]` Service ID:** `srv-dar7hte0tbcc739aofrg`
-- **`[VERIFIED]` Region:** `frankfurt`
-- **`[VERIFIED]` Physical Disk Attachment:** Persistent disk `dsk-db4blurl550s73b87cmg` (`sovereign-audit-ledger`, 1 GB) **is attached and mounted at `/data`**. The append-only cryptographic audit ledger is durable across container redeployments.
-- **`[VERIFIED]` Environment Variable Alignment:** Render service is configured with `ENFORCE_INGRESS_AUTH=true`, `PROTECT_DASHBOARD=true`, `DISABLE_DASHBOARD=false`, `AUDIT_STORAGE_PATH=/data/audit.log`, and generated secrets.
+- **`[VERIFIED]` Persistent Disk Attachment:**
+  Persistent disk `dsk-db4blurl550s73b87cmg` (`sovereign-audit-ledger`, 1 GB) **is confirmed attached and mounted at `/data`** on Render service `srv-dar7hte0tbcc739aofrg`. The append-only cryptographic audit ledger is durable across container redeployments.
+- **`[VERIFIED]` Ecosystem Dependency & Network Ingress Analysis:**
+  Before considering whether to convert Sovereign Security to a Render "Private Service", the ecosystem fleet architecture was inspected:
+  - Sibling services include `sovereign-os-backend`, `nova-os`, `MetroTaskForce`, and `clc-intelligence-kernel`.
+  - These services interact with Sovereign Security via mutual HMAC authentication (`EcosystemAuthenticator`).
+  - Converting the service to a Private Service would isolate it to Render's internal private network, breaking cross-network integrations and external attestation callers unless routed through a private VPC gateway.
+  - **Decision:** Maintaining the public web service with strict HTTP Basic Auth and fail-closed API token/HMAC enforcement is the correct architecture. Public exposure without credentials is fully eliminated.
 
 ---
 
-## 7. Incident Closure & Final Sign-off
+## 8. Residual Risks & Operator Decisions
 
-**Final Release Status:** **`DEPLOYED_AND_VERIFIED`**
+| Risk Item | Residual Level | Mitigation In Place | Operator Action |
+|---|---|---|---|
+| **Ecosystem HMAC Synchronization** | Low | Environment variables in `render.yaml` generate random strings unless pre-shared keys are populated in Render Secret Manager. | Ensure pre-shared HMAC keys (`SOVEREIGN_OS_SECRET_KEY`, etc.) are synchronized with sibling services if inter-service communication fails. |
+| **Audit Ledger Disk Growth** | Low | Render persistent disk has 1 GB allocated. Current ledger footprint is minimal. | Periodically monitor disk usage in the Render Dashboard under **Disks**; create backup snapshots if required. |
+| **SOC Dashboard Operator Access** | Low | Protected by HTTP Basic Auth. Credentials generated on Render deploy. | Retrieve `SOC_DASHBOARD_USER` and `SOC_DASHBOARD_PASSWORD` from Render Dashboard Environment tab for operator login. |
 
-### Incident Summary & Resolution
-1. **Root Cause Resolved:** The live service was previously running outdated commit `4773716` because Render's GitHub App connection had lost permission to clone the private repository `Bladecmd/Sovereign-Sec`. Once GitHub permissions were granted by the operator, Render successfully pulled commit `cd0870f`.
-2. **Build & Deployment Succeeded:** Docker multi-stage container build completed cleanly, dumb-init PID 1 supervisor booted, and the service transitioned to live on Render with persistent disk mounted at `/data`.
-3. **Public Exposure Fully Eliminated:** Post-deployment empirical probes confirm that unauthenticated access to the SOC dashboard, Prometheus metrics, audit ledger logs, and compliance endpoints is completely blocked (`HTTP 401 Unauthorized`). Only `/health` and `/ready` remain public liveness/readiness probes as designed.
-4. **All Tests Passing:** 235 tests pass across 95 test suites with 0 failures, 0 type errors, and clean Git status.
+---
+
+## 9. Final Governance Verdict
+
+**Final Release Status:** **`LIVE_SECURITY_VERIFIED`**
+
+### Summary Statement
+The live production deployment at `https://sovereign-security.onrender.com` has been successfully updated, secured, and empirically verified. The previously reported public exposure of dashboards, metrics, audit records, and misleading certification claims is completely closed. All sensitive endpoints strictly enforce zero-trust authentication (`HTTP 401 Unauthorized`). The persistent audit ledger disk is active and mounted at `/data`. Staging tests pass 235/235, static checks and builds are clean, and repository truth is synchronized on `master` at commit `8c26e9a`.
